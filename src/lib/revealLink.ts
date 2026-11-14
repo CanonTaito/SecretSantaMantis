@@ -20,6 +20,10 @@ export interface RevealPayload {
   b?: string
   /** exchange date */
   d?: string
+  /** '1' when the receiver is a child */
+  k?: string
+  /** receiver's age, if given */
+  a?: string
 }
 
 export const REVEAL_PREFIX = '#/r/'
@@ -52,7 +56,7 @@ export function encodeReveal(payload: RevealPayload): string {
   return toBase64Url(xor(new TextEncoder().encode(JSON.stringify(compact))))
 }
 
-const OPTIONAL_KEYS = ['w', 'e', 'b', 'd'] as const
+const OPTIONAL_KEYS = ['w', 'e', 'b', 'd', 'k', 'a'] as const
 const MAX_FIELD = 2000
 
 /** Parse a scrambled payload. Returns null for anything malformed, so callers can show a friendly error. */

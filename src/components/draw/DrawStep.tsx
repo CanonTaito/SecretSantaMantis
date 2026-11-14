@@ -20,6 +20,7 @@ export function DrawStep({ state, dispatch }: Props) {
   const names = personNames(state.households)
   const allNames = Object.values(names)
   const peopleCount = allNames.length
+  const childCount = state.households.reduce((n, h) => n + h.people.filter((p) => p.isChild).length, 0)
   const [shuffling, setShuffling] = useState(false)
   const [shownName, setShownName] = useState('')
   const [impossible, setImpossible] = useState<string | null>(null)
@@ -90,6 +91,7 @@ export function DrawStep({ state, dispatch }: Props) {
         <h2 className="text-2xl font-bold">Ready to draw</h2>
         <p className="mt-1 text-pine-800/75">
           {peopleCount} people · {state.households.length} households
+          {childCount > 0 && ` · ${childCount} ${childCount === 1 ? 'child' : 'children'}`}
           {state.exclusions.length > 0 &&
             ` · ${state.exclusions.length} extra ${state.exclusions.length === 1 ? 'rule' : 'rules'}`}
         </p>
@@ -118,6 +120,9 @@ export function DrawStep({ state, dispatch }: Props) {
         <p className="mt-3 text-sm text-pine-800/60">
           You won't see who got whom — everyone finds out from their own link.
         </p>
+        {childCount > 0 && (
+          <p className="mt-1 text-sm text-pine-800/60">🧒 Children only draw other children, and adults only draw adults.</p>
+        )}
 
         {impossible && (
           <div role="alert" className="mx-auto mt-6 max-w-lg rounded-xl bg-berry-50 px-4 py-3 text-left text-sm text-berry-700">

@@ -13,12 +13,12 @@ function sample(): SantaState {
         id: 'h1',
         name: 'The Taitos',
         people: [
-          { id: 'a', name: 'Cruz', email: 'cruz@example.com', wishlist: 'Books' },
-          { id: 'b', name: 'Rey', email: '', wishlist: '' },
+          { id: 'a', name: 'Cruz', email: 'cruz@example.com', wishlist: 'Books', isChild: false, age: '' },
+          { id: 'b', name: 'Rey', email: '', wishlist: '', isChild: false, age: '' },
         ],
       },
-      { id: 'h2', name: 'The Lees', people: [{ id: 'c', name: 'Vegeta', email: '', wishlist: '' }] },
-      { id: 'h3', name: 'Gran', people: [{ id: 'd', name: 'Gran', email: '', wishlist: 'Tea' }] },
+      { id: 'h2', name: 'The Lees', people: [{ id: 'c', name: 'Vegeta', email: '', wishlist: '', isChild: false, age: '' }] },
+      { id: 'h3', name: 'Gran', people: [{ id: 'd', name: 'Gran', email: '', wishlist: 'Tea', isChild: false, age: '' }] },
     ],
     exclusions: [{ id: 'x', giverId: 'a', receiverId: 'c', mutual: true }],
     draw: { createdAt: '2026-11-14T00:00:00.000Z', pairs: { a: 'd', b: 'c', c: 'a', d: 'b' }, sent: { a: true } },
@@ -122,5 +122,17 @@ describe('swapReceivers', () => {
     const s = sample()
     expect(santaReducer(s, { type: 'swapReceivers', giverA: 'a', giverB: 'zzz' })).toBe(s)
     expect(santaReducer(s, { type: 'swapReceivers', giverA: 'a', giverB: 'a' })).toBe(s)
+  })
+})
+
+describe('children in backups', () => {
+  test('keeps child and age, and fills them in for older backups', () => {
+    const s = sample()
+    s.households[0]!.people[1] = { ...s.households[0]!.people[1]!, isChild: true, age: '8' }
+    expect(parseBackup(serializeBackup(s))!.households[0]!.people[1]).toMatchObject({ isChild: true, age: '8' })
+
+    const old = JSON.parse(JSON.stringify(sample()))
+    for (const h of old.households) for (const p of h.people) { delete p.isChild; delete p.age }
+    expect(parseBackup(JSON.stringify(old))!.households[0]!.people[0]).toMatchObject({ isChild: false, age: '' })
   })
 })

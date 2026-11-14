@@ -6,7 +6,7 @@ No accounts, no server, no email service. It all runs in your browser.
 
 ## How it works
 
-1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Optionally, add a gift hint for each person and extra rules like "Cruz can't draw Vegeta" (handy for not repeating last year's match).
+1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Tick **Child** for children (with their age, if you like): children only draw other children, and adults only draw adults. Optionally, add a gift hint for each person and extra rules like "Cruz can't draw Vegeta" (handy for not repeating last year's match).
 2. **Draw.** Press the button. Nobody draws themselves, anyone in their own household, or anyone a rule blocks. If the rules make a draw impossible, the app tells you why — for example, when one household is more than half the group.
 3. **Share.** Every person gets a private link. Copy it into a text, use your phone's share sheet, or press **Email** to open a ready-to-send message in your own email app. Tick people off as you go.
 4. **Unwrap.** When someone opens their link they see "Hi Cruz!", tap a present, and confetti reveals who they're buying for, along with that person's gift hint, the budget and the date.
@@ -17,14 +17,15 @@ As the organizer, you never see the matches unless you choose to.
 
 Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** on the Set up screen. Use these columns (press **Download template** for an example file):
 
-| Household | Name | Email | Gift hint |
-| --- | --- | --- | --- |
-| The Taitos | Cruz | cruz@example.com | Loves online gaming |
-| The Taitos | Rey | | |
-| The Ottos | Vegeta | vegeta@example.com | Batman |
-| Grandma Lina | Grandma Lina | | Gardening |
+| Household | Name | Email | Gift hint | Child | Age |
+| --- | --- | --- | --- | --- | --- |
+| The Taitos | Cruz | cruz@example.com | Loves online gaming | | |
+| The Taitos | Rey | | | Yes | 8 |
+| The Ottos | Vegeta | vegeta@example.com | Batman | Yes | |
+| Grandma Lina | Grandma Lina | | Gardening | | |
 
-- **Name** is required. **Email** and **Gift hint** are optional.
+- **Name** is required. **Email**, **Gift hint**, **Child** and **Age** are optional.
+- Put **Yes** in the Child column for children. Age is only used for children; it's shown on their Secret Santa's reveal page.
 - Rows with the same household name (any capitalisation) go together. A blank household means that person lives on their own.
 - Imported people are added to whoever is already on the list. Anyone already listed is skipped, so importing the same file twice is safe.
 - Comma, semicolon and tab separated files all work, including "CSV UTF-8" from Excel.

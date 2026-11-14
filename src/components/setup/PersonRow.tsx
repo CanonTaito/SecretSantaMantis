@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function PersonRow({ person, index, dispatch, locked, canRemove }: Props) {
-  const update = (field: 'name' | 'email' | 'wishlist') => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const update = (field: 'name' | 'email' | 'wishlist' | 'age') => (e: React.ChangeEvent<HTMLInputElement>) =>
     dispatch({ type: 'updatePerson', personId: person.id, field, value: e.target.value })
   const who = person.name.trim() || `person ${index + 1}`
 
@@ -50,6 +50,35 @@ export function PersonRow({ person, index, dispatch, locked, canRemove }: Props)
             maxLength={300}
             autoComplete="off"
           />
+          <div className="flex min-h-9 flex-wrap items-center gap-x-4 gap-y-2 sm:col-span-2">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-pine-800">
+              <input
+                type="checkbox"
+                className="size-4 accent-pine-600"
+                checked={person.isChild}
+                onChange={(e) => dispatch({ type: 'setChild', personId: person.id, isChild: e.target.checked })}
+                disabled={locked}
+              />
+              🧒 Child
+            </label>
+            {person.isChild && (
+              <label className="flex items-center gap-2 text-sm text-pine-800">
+                Age
+                <input
+                  className="input w-20 py-1"
+                  inputMode="numeric"
+                  placeholder="optional"
+                  aria-label={`Age of ${who}`}
+                  value={person.age}
+                  onChange={update('age')}
+                  disabled={locked}
+                  maxLength={10}
+                  autoComplete="off"
+                />
+              </label>
+            )}
+            {person.isChild && <span className="text-xs text-pine-800/55">Kids only draw other kids.</span>}
+          </div>
         </div>
         {!locked && canRemove && (
           <button

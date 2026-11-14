@@ -1,4 +1,4 @@
-import type { EventDetails, Household, Person, SantaState, Step } from '../types.ts'
+import type { EventDetails, Household, SantaState, Step } from '../types.ts'
 import { createInitialState, newHousehold, newId, newPerson } from '../lib/storage.ts'
 
 export type SantaAction =
@@ -8,7 +8,8 @@ export type SantaAction =
   | { type: 'renameHousehold'; householdId: string; name: string }
   | { type: 'removeHousehold'; householdId: string }
   | { type: 'addPerson'; householdId: string }
-  | { type: 'updatePerson'; personId: string; field: keyof Omit<Person, 'id'>; value: string }
+  | { type: 'updatePerson'; personId: string; field: 'name' | 'email' | 'wishlist' | 'age'; value: string }
+  | { type: 'setChild'; personId: string; isChild: boolean }
   | { type: 'removePerson'; personId: string }
   | { type: 'addExclusion'; giverId: string; receiverId: string; mutual: boolean }
   | { type: 'toggleExclusionMutual'; exclusionId: string }
@@ -29,6 +30,7 @@ const SETUP_EDITS = new Set<SantaAction['type']>([
   'removeHousehold',
   'addPerson',
   'updatePerson',
+  'setChild',
   'removePerson',
   'addExclusion',
   'toggleExclusionMutual',
@@ -90,6 +92,17 @@ export function santaReducer(state: SantaState, action: SantaAction): SantaState
         households: state.households.map((h) => ({
           ...h,
           people: h.people.map((p) => (p.id === action.personId ? { ...p, [action.field]: action.value } : p)),
+        })),
+      }
+
+    case 'setChild':
+      return {
+        ...state,
+        households: state.households.map((h) => ({
+          ...h,
+          people: h.people.map((p) =>
+            p.id === action.personId ? { ...p, isChild: action.isChild, age: action.isChild ? p.age : '' } : p,
+          ),
         })),
       }
 

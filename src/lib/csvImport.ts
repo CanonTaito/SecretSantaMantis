@@ -2,15 +2,17 @@ import type { Household } from '../types.ts'
 import { newId } from './storage.ts'
 
 /**
- * Import a guest list from CSV with columns: Household, Name, Email, Gift hint.
- * Email and Gift hint are optional. A header row is recommended; without one,
- * columns are read in that order.
+ * Import a guest list from CSV with columns: Household, Name, Email, Gift hint, Child, Age.
+ * Only Name is required. A header row is recommended; without one, columns are read in that order.
+ * Child is "Yes" for children (kids only draw kids); Age is optional and only kept for children.
  */
 
 export interface ImportedPerson {
   name: string
   email: string
   wishlist: string
+  isChild: boolean
+  age: string
 }
 
 export interface ImportedHousehold {
@@ -23,14 +25,15 @@ export type CsvImportResult =
   | { ok: false; error: string }
 
 export const CSV_TEMPLATE = [
-  'Household,Name,Email,Gift hint',
-  'The Taitos,Cruz,cruz@example.com,Loves online gaming',
-  'The Taitos,Rey,,',
-  'The Ottos,Vegeta,vegeta@example.com,Batman',
-  'Grandma Lina,Grandma Lina,,Gardening',
+  'Household,Name,Email,Gift hint,Child,Age',
+  'The Taitos,Cruz,cruz@example.com,Loves online gaming,,',
+  'The Taitos,Rey,,,Yes,8',
+  'The Ottos,Vegeta,vegeta@example.com,Batman,Yes,',
+  'Grandma Lina,Grandma Lina,,Gardening,,',
 ].join('\r\n')
 
-const LIMITS = { household: 60, name: 60, email: 120, wishlist: 300 }
+const LIMITS = { household: 60, name: 60, email: 120, wishlist: 300, child: 20, age: 10 }
+const YES = /^(y|yes|true|1|x|✓|✔|child|kid)$/i
 const MAX_ROWS = 500
 
 /** Parse CSV text into rows of cells. Handles quotes, escaped quotes, newlines in quotes and a BOM. */
@@ -85,7 +88,7 @@ function detectDelimiter(text: string): string {
   return candidates[0]![1] > 0 ? candidates[0]![0] : ','
 }
 
-type Column = 'household' | 'name' | 'email' | 'wishlist'
+type Column = 'household' | 'name' | 'email' | 'wishlist' | 'child' | 'age'
 
 const HEADER_ALIASES: Record<string, Column> = {
   household: 'household',
@@ -107,13 +110,21 @@ const HEADER_ALIASES: Record<string, Column> = {
   'gift idea': 'wishlist',
   'gift ideas': 'wishlist',
   notes: 'wishlist',
+  child: 'child',
+  kid: 'child',
+  'is child': 'child',
+  'is a child': 'child',
+  age: 'age',
+  'child age': 'age',
+  "child's age": 'age',
 }
 
 const normalizeHeader = (h: string) =>
   h
     .trim()
     .toLowerCase()
-    .replace(/\(optional\)/g, '')
+    .replace(/\((optional|yes\/no|y\/n)\)/g, '')
+    .replace(/\?/g, '')
     .replace(/[_\s]+/g, ' ')
     .trim()
 
@@ -134,7 +145,7 @@ export function importPeopleCsv(text: string): CsvImportResult {
       return { ok: false, error: 'Couldn’t find a "Name" column. The first row should be: Household, Name, Email, Gift hint.' }
     }
   } else {
-    ;(['household', 'name', 'email', 'wishlist'] as const).forEach((c, i) => columns.set(c, i))
+    ;(['household', 'name', 'email', 'wishlist', 'child', 'age'] as const).forEach((c, i) => columns.set(c, i))
   }
 
   const body = hasHeader ? rows.slice(1) : rows
@@ -155,7 +166,10 @@ export function importPeopleCsv(text: string): CsvImportResult {
       warnings.push(`Row ${line} has no name, so it was skipped.`)
       return
     }
-    const person = { name, email: get(row, 'email'), wishlist: get(row, 'wishlist') }
+    const isChild = YES.test(get(row, 'child'))
+    const age = get(row, 'age')
+    if (age && !isChild) warnings.push(`Row ${line} has an age but isn't marked as a child, so the age was left out.`)
+    const person = { name, email: get(row, 'email'), wishlist: get(row, 'wishlist'), isChild, age: isChild ? age : '' }
     const householdName = get(row, 'household')
     if (!householdName) {
       // No household given: they live on their own.

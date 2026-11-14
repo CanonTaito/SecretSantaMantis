@@ -31,7 +31,25 @@ describe('importPeopleCsv', () => {
       name: 'Vegeta',
       email: 'vegeta@example.com',
       wishlist: 'Batman',
+      isChild: true,
+      age: '',
     })
+    expect(result.households[0]!.people.map((p) => [p.name, p.isChild, p.age])).toEqual([
+      ['Cruz', false, ''],
+      ['Rey', true, '8'],
+    ])
+  })
+
+  test('reads Child and Age, and drops an age for someone not marked as a child', () => {
+    const result = importPeopleCsv('Name,Household,Child?,Age\nMia,The Ottos,y,6\nTom,,,40\nAva,,no,')
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.households.flatMap((h) => h.people.map((p) => [p.name, p.isChild, p.age]))).toEqual([
+      ['Mia', true, '6'],
+      ['Tom', false, ''],
+      ['Ava', false, ''],
+    ])
+    expect(result.warnings).toEqual(["Row 3 has an age but isn't marked as a child, so the age was left out."])
   })
 
   test('accepts headers in any order, case and common wording', () => {
@@ -40,8 +58,8 @@ describe('importPeopleCsv', () => {
       {
         name: 'the taitos',
         people: [
-          { name: 'Rey', email: 'rey@x.test', wishlist: 'Books' },
-          { name: 'Cruz', email: '', wishlist: '' },
+          { name: 'Rey', email: 'rey@x.test', wishlist: 'Books', isChild: false, age: '' },
+          { name: 'Cruz', email: '', wishlist: '', isChild: false, age: '' },
         ],
       },
     ])
@@ -58,7 +76,7 @@ describe('importPeopleCsv', () => {
     const result = importPeopleCsv('The Ottos,Vegeta,vegeta@x.test,Tea')
     expect(result.ok && result.households[0]).toEqual({
       name: 'The Ottos',
-      people: [{ name: 'Vegeta', email: 'vegeta@x.test', wishlist: 'Tea' }],
+      people: [{ name: 'Vegeta', email: 'vegeta@x.test', wishlist: 'Tea', isChild: false, age: '' }],
     })
   })
 
@@ -81,14 +99,14 @@ describe('importPeopleCsv', () => {
 })
 
 describe('mergeImport', () => {
-  const person = (id: string, name: string) => ({ id, name, email: '', wishlist: '' })
+  const person = (id: string, name: string) => ({ id, name, email: '', wishlist: '', isChild: false, age: '' })
 
   test('replaces empty placeholder households', () => {
     const blank: Household[] = [
       { id: 'h1', name: '', people: [person('p1', '')] },
       { id: 'h2', name: '', people: [person('p2', '')] },
     ]
-    const result = mergeImport(blank, [{ name: 'The Ottos', people: [{ name: 'Vegeta', email: '', wishlist: '' }] }])
+    const result = mergeImport(blank, [{ name: 'The Ottos', people: [{ name: 'Vegeta', email: '', wishlist: '', isChild: false, age: '' }] }])
     expect(result.households).toHaveLength(1)
     expect(result.households[0]!.name).toBe('The Ottos')
     expect(result.added).toBe(1)
@@ -100,8 +118,8 @@ describe('mergeImport', () => {
       {
         name: 'the taitos',
         people: [
-          { name: 'cruz', email: '', wishlist: '' },
-          { name: 'Rey', email: '', wishlist: '' },
+          { name: 'cruz', email: '', wishlist: '', isChild: false, age: '' },
+          { name: 'Rey', email: '', wishlist: '', isChild: false, age: '' },
         ],
       },
     ])
@@ -121,7 +139,7 @@ describe('mergeImport', () => {
 
   test('skips a name that is already in a different household', () => {
     const current: Household[] = [{ id: 'h1', name: 'The Taitos', people: [person('p1', 'Cruz')] }]
-    const result = mergeImport(current, [{ name: 'The Ottos', people: [{ name: 'Cruz', email: '', wishlist: '' }] }])
+    const result = mergeImport(current, [{ name: 'The Ottos', people: [{ name: 'Cruz', email: '', wishlist: '', isChild: false, age: '' }] }])
     expect(result).toMatchObject({ added: 0, alreadyListed: 1 })
     expect(result.households).toHaveLength(1)
   })

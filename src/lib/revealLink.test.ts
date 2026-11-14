@@ -72,3 +72,10 @@ describe('reveal links', () => {
     expect(buildMailto('', 'Cruz', '', 'u').startsWith('mailto:?subject=')).toBe(true)
   })
 })
+
+describe('child details in links', () => {
+  test('round-trips the child flag and age', () => {
+    const p: RevealPayload = { v: 1, g: 'Rey', r: 'Vegeta', k: '1', a: '10' }
+    expect(decodeReveal(encodeReveal(p))).toEqual(p)
+  })
+})

@@ -9,7 +9,7 @@ export function newId(): string {
 }
 
 export function newPerson(): Person {
-  return { id: newId(), name: '', email: '', wishlist: '' }
+  return { id: newId(), name: '', email: '', wishlist: '', isChild: false, age: '' }
 }
 
 export function newHousehold(): Household {
@@ -40,6 +40,8 @@ function parsePerson(v: unknown): Person | null {
     name: v.name,
     email: isStr(v.email) ? v.email : '',
     wishlist: isStr(v.wishlist) ? v.wishlist : '',
+    isChild: v.isChild === true,
+    age: v.isChild === true && isStr(v.age) ? v.age : '',
   }
 }
 

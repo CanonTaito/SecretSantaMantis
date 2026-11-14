@@ -22,3 +22,9 @@ export function formatDate(value: string): string {
   if (Number.isNaN(date.getTime())) return value
   return date.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 }
+
+/** "🧒 Child, 8" / "🧒 Child" for children, empty for adults. */
+export function childLabel(person: { isChild: boolean; age: string }): string {
+  if (!person.isChild) return ''
+  return person.age.trim() ? `🧒 Child, ${person.age.trim()}` : '🧒 Child'
+}

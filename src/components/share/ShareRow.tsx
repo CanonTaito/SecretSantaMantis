@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Person } from '../../types.ts'
 import { buildMailto } from '../../lib/revealLink.ts'
 import { canNativeShare, copyText } from '../../lib/clipboard.ts'
+import { childLabel } from '../../lib/labels.ts'
 
 interface Props {
   person: Person
@@ -57,6 +58,7 @@ export function ShareRow({ person, household, url, eventName, sent, onSent }: Pr
           <span className="block truncate font-semibold">{name}</span>
           <span className="block truncate text-xs text-pine-800/60">
             {household}
+            {person.isChild && ` · ${childLabel(person)}`}
             {person.email && ` · ${person.email}`}
             {sent && <span className="font-semibold text-pine-600"> · Sent ✓</span>}
           </span>

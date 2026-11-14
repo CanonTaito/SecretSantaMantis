@@ -61,7 +61,7 @@ export function CsvImport({ households, dispatch }: Props) {
           onChange={(e) => onFile(e.target.files?.[0])}
         />
       </div>
-      <p className="text-xs text-pine-800/60">Columns: Household, Name, Email (optional), Gift hint (optional)</p>
+      <p className="text-xs text-pine-800/60">Columns: Household, Name, then optional Email, Gift hint, Child (Yes) and Age</p>
 
       {status?.kind === 'error' && (
         <p role="alert" className="text-sm font-medium text-berry-600">
@@ -77,7 +77,7 @@ export function CsvImport({ households, dispatch }: Props) {
                 <li key={w}>{w}</li>
               ))}
               {status.warnings.length > MAX_WARNINGS_SHOWN && (
-                <li>…and {status.warnings.length - MAX_WARNINGS_SHOWN} more rows without a name.</li>
+                <li>…and {status.warnings.length - MAX_WARNINGS_SHOWN} more.</li>
               )}
             </ul>
           )}

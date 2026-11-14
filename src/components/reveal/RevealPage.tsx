@@ -67,7 +67,8 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
     }, 900)
   }
 
-  const chips = [payload.b && `💰 Budget: ${payload.b}`, payload.d && `📅 ${formatDate(payload.d)}`].filter(
+  const kidChip = payload.k === '1' ? (payload.a ? `🧒 Age ${payload.a}` : '🧒 Child') : ''
+  const chips = [kidChip, payload.b && `💰 Budget: ${payload.b}`, payload.d && `📅 ${formatDate(payload.d)}`].filter(
     (c): c is string => !!c,
   )
 

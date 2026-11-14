@@ -5,6 +5,8 @@ export type Rng = () => number
 export interface DrawPerson {
   id: string
   householdId: string
+  /** Children only draw other children; adults only draw adults. */
+  isChild?: boolean
 }
 
 export interface DrawInput {
@@ -38,6 +40,7 @@ export function allowedReceivers(input: DrawInput): Map<string, Set<string>> {
     for (const receiver of input.people) {
       if (receiver.id === giver.id) continue
       if (receiver.householdId === giver.householdId) continue
+      if (!!receiver.isChild !== !!giver.isChild) continue
       if (blocked.has(`${giver.id}\u0000${receiver.id}`)) continue
       set.add(receiver.id)
     }
@@ -106,15 +109,33 @@ export function explainImpossible(
   names: Record<string, string>,
   householdNames: Record<string, string>,
 ): string {
-  const total = input.people.length
   const name = (id: string) => names[id] || 'Someone'
+  const hasChildren = input.people.some((p) => p.isChild)
 
-  const sizes = new Map<string, number>()
-  for (const p of input.people) sizes.set(p.householdId, (sizes.get(p.householdId) ?? 0) + 1)
-  for (const [householdId, size] of sizes) {
-    if (size > total / 2) {
-      const label = householdNames[householdId] || 'One household'
-      return `${label} ${size === 1 ? 'is' : 'are'} ${size} of ${total} people, so someone would have to draw a housemate. Add more people from other households.`
+  // With children, there are two separate draws: kids draw kids, adults draw adults.
+  const pools = hasChildren
+    ? [
+        { people: input.people.filter((p) => p.isChild), noun: 'children', one: 'child', draw: "the kids' draw" },
+        { people: input.people.filter((p) => !p.isChild), noun: 'adults', one: 'adult', draw: "the adults' draw" },
+      ]
+    : [{ people: input.people, noun: 'people', one: 'person', draw: '' }]
+
+  for (const pool of pools) {
+    const total = pool.people.length
+    if (hasChildren && total === 1) {
+      const only = name(pool.people[0]!.id)
+      return pool.one === 'child'
+        ? `${only} is the only child, and children only draw other children. Add another child, or untick "Child" for ${only}.`
+        : `${only} is the only adult, and adults only draw other adults. Add another adult, or mark fewer people as children.`
+    }
+    const sizes = new Map<string, number>()
+    for (const p of pool.people) sizes.set(p.householdId, (sizes.get(p.householdId) ?? 0) + 1)
+    for (const [householdId, size] of sizes) {
+      if (size > total / 2) {
+        const label = householdNames[householdId] || 'One household'
+        const where = pool.draw ? ` in ${pool.draw}` : ''
+        return `${label} ${size === 1 ? 'is' : 'are'} ${size} of ${total} ${pool.noun}${where}, so someone would have to draw a housemate. Add more ${pool.noun} from other households.`
+      }
     }
   }
 
@@ -136,7 +157,9 @@ export function explainImpossible(
 
 /** Turn the organizer's setup into draw input: drop empty households, expand mutual exclusions. */
 export function buildDrawInput(households: Household[], exclusions: Exclusion[]): DrawInput {
-  const people = households.flatMap((h) => h.people.map((p) => ({ id: p.id, householdId: h.id })))
+  const people = households.flatMap((h) =>
+    h.people.map((p) => ({ id: p.id, householdId: h.id, isChild: p.isChild })),
+  )
   const ids = new Set(people.map((p) => p.id))
   const rules = exclusions
     .filter((e) => ids.has(e.giverId) && ids.has(e.receiverId))

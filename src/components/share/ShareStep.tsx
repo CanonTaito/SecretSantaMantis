@@ -35,6 +35,8 @@ export function ShareStep({ state, dispatch, confirm }: Props) {
       e: event.name.trim(),
       b: event.budget.trim(),
       d: event.date.trim(),
+      k: receiver.isChild ? '1' : '',
+      a: receiver.isChild ? receiver.age.trim() : '',
     })
   }
 

@@ -3,6 +3,10 @@ export interface Person {
   name: string
   email: string
   wishlist: string
+  /** Children only draw, and are only drawn by, other children. */
+  isChild: boolean
+  /** Optional, only used for children. Free text so "7" or "7½" both work. */
+  age: string
 }
 
 export interface Household {

@@ -72,10 +72,10 @@ describe('generateDraw', () => {
 
   test('mutual exclusions block both directions', () => {
     const hh: Household[] = [
-      { id: 'a', name: 'A', people: [{ id: 'a1', name: 'A1', email: '', wishlist: '' }] },
-      { id: 'b', name: 'B', people: [{ id: 'b1', name: 'B1', email: '', wishlist: '' }] },
-      { id: 'c', name: 'C', people: [{ id: 'c1', name: 'C1', email: '', wishlist: '' }] },
-      { id: 'd', name: 'D', people: [{ id: 'd1', name: 'D1', email: '', wishlist: '' }] },
+      { id: 'a', name: 'A', people: [{ id: 'a1', name: 'A1', email: '', wishlist: '', isChild: false, age: '' }] },
+      { id: 'b', name: 'B', people: [{ id: 'b1', name: 'B1', email: '', wishlist: '', isChild: false, age: '' }] },
+      { id: 'c', name: 'C', people: [{ id: 'c1', name: 'C1', email: '', wishlist: '', isChild: false, age: '' }] },
+      { id: 'd', name: 'D', people: [{ id: 'd1', name: 'D1', email: '', wishlist: '', isChild: false, age: '' }] },
     ]
     const input = buildDrawInput(hh, [{ id: 'x', giverId: 'a1', receiverId: 'b1', mutual: true }])
     expect(input.exclusions).toHaveLength(2)
@@ -178,7 +178,7 @@ describe('explainImpossible', () => {
 })
 
 describe('validateSetup', () => {
-  const person = (id: string, name: string) => ({ id, name, email: '', wishlist: '' })
+  const person = (id: string, name: string) => ({ id, name, email: '', wishlist: '', isChild: false, age: '' })
 
   test('needs at least three people', () => {
     const hh: Household[] = [{ id: 'a', name: 'A', people: [person('1', 'Cruz'), person('2', 'Rey')] }]
@@ -230,5 +230,46 @@ describe('planReassign', () => {
 
   test('returns null when nothing would change', () => {
     expect(planReassign(pairs, allowedReceivers(input), 'h0p0', 'h1p0')).toBeNull()
+  })
+})
+
+describe('children only draw children', () => {
+  // Two families, each with two adults and one child.
+  const input: DrawInput = {
+    people: [
+      { id: 'a1', householdId: 'A' },
+      { id: 'a2', householdId: 'A' },
+      { id: 'ak', householdId: 'A', isChild: true },
+      { id: 'b1', householdId: 'B' },
+      { id: 'b2', householdId: 'B' },
+      { id: 'bk', householdId: 'B', isChild: true },
+    ],
+    exclusions: [],
+  }
+  const kids = new Set(['ak', 'bk'])
+
+  test('kids draw kids and adults draw adults, across many draws', () => {
+    for (let s = 0; s < 200; s++) {
+      const pairs = generateDraw(input, seeded(s))
+      assertValid(input, pairs)
+      for (const [giver, receiver] of Object.entries(pairs!)) {
+        expect(kids.has(receiver)).toBe(kids.has(giver))
+      }
+    }
+  })
+
+  test('a lone child cannot be drawn, with a clear reason', () => {
+    const lone: DrawInput = { ...input, people: input.people.filter((p) => p.id !== 'bk') }
+    expect(generateDraw(lone, seeded(1))).toBeNull()
+    expect(explainImpossible(lone, { ak: 'Rey' }, {})).toContain('Rey is the only child')
+  })
+
+  test('two children in the same household cannot draw each other', () => {
+    const siblings: DrawInput = {
+      people: [...input.people.filter((p) => p.id !== 'bk'), { id: 'ak2', householdId: 'A', isChild: true }],
+      exclusions: [],
+    }
+    expect(generateDraw(siblings, seeded(1))).toBeNull()
+    expect(explainImpossible(siblings, {}, { A: 'The Taitos' })).toContain("The Taitos are 2 of 2 children in the kids' draw")
   })
 })
