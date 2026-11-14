@@ -59,7 +59,7 @@ export function PersonRow({ person, index, dispatch, locked, canRemove }: Props)
                 onChange={(e) => dispatch({ type: 'setChild', personId: person.id, isChild: e.target.checked })}
                 disabled={locked}
               />
-              🧒 Child
+              🧒🏾 Child
             </label>
             {person.isChild && (
               <label className="flex items-center gap-2 text-sm text-pine-800">

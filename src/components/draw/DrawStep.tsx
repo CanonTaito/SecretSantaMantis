@@ -121,7 +121,7 @@ export function DrawStep({ state, dispatch }: Props) {
           You won't see who got whom — everyone finds out from their own link.
         </p>
         {childCount > 0 && (
-          <p className="mt-1 text-sm text-pine-800/60">🧒 Children only draw other children, and adults only draw adults.</p>
+          <p className="mt-1 text-sm text-pine-800/60">🧒🏾 Children only draw other children, and adults only draw adults.</p>
         )}
 
         {impossible && (

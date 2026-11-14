@@ -138,7 +138,7 @@ export function MasterList({ state, dispatch, confirm }: Props) {
                               const blocked = !isCurrent && !plan?.ok
                               return (
                                 <option key={p.id} value={p.id} disabled={blocked}>
-                                  {p.name.trim()} ({p.household}){p.isChild ? ' 🧒' : ''}
+                                  {p.name.trim()} ({p.household}){p.isChild ? ' 🧒🏾' : ''}
                                   {blocked ? ' — breaks a rule' : ''}
                                 </option>
                               )

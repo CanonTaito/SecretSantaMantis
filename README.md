@@ -1,4 +1,4 @@
-# 🎅🏾 Secret Santa
+# 🎅🏾 Secret Santa Mantis
 
 A free, no-sign-up Secret Santa generator for families. People in the same household never draw each other, and everyone gets their own private link to unwrap their match.
 
