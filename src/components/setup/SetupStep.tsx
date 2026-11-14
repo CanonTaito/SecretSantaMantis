@@ -97,7 +97,7 @@ export function SetupStep({ state, dispatch, confirm }: Props) {
       <ExclusionsEditor households={state.households} exclusions={state.exclusions} dispatch={dispatch} locked={locked} />
 
       <div className="sticky bottom-0 -mx-4 flex items-center justify-between gap-3 border-t border-cream-300 bg-cream-100/90 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-2xl sm:border">
-        <span className="text-sm text-pine-800/80">
+        <span className="text-xs text-pine-800/80 sm:text-sm">
           <strong className="text-pine-900">{peopleCount}</strong> {peopleCount === 1 ? 'person' : 'people'} in{' '}
           <strong className="text-pine-900">{state.households.length}</strong>{' '}
           {state.households.length === 1 ? 'household' : 'households'}

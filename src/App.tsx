@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useSantaState } from './hooks/useSantaState.ts'
 import { useConfirm } from './components/ConfirmDialog.tsx'
 import { Stepper } from './components/Stepper.tsx'
@@ -6,6 +7,7 @@ import { DrawStep } from './components/draw/DrawStep.tsx'
 import { ShareStep } from './components/share/ShareStep.tsx'
 import { RevealPage } from './components/reveal/RevealPage.tsx'
 import { useHash } from './hooks/useHash.ts'
+import { Snowfall } from './components/Snowfall.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
@@ -13,6 +15,15 @@ function Organizer() {
   const [state, dispatch] = useSantaState()
   const [dialog, confirm] = useConfirm()
   const reachable: Step[] = state.draw ? ['setup', 'share'] : ['setup', 'draw']
+
+  const firstRender = useRef(true)
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    window.scrollTo({ top: 0 })
+  }, [state.step])
 
   return (
     <div className="mx-auto max-w-4xl px-4 pt-8 pb-16 sm:pt-12">
@@ -41,6 +52,10 @@ export default function App() {
   const hash = useHash()
   const reveal = revealFromHash(hash)
   // `undefined` = not a reveal link; `null` = a reveal link that couldn't be read.
-  if (reveal !== undefined) return <RevealPage key={hash} payload={reveal} />
-  return <Organizer />
+  return (
+    <>
+      <Snowfall />
+      {reveal !== undefined ? <RevealPage key={hash} payload={reveal} /> : <Organizer />}
+    </>
+  )
 }
