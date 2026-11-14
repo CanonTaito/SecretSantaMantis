@@ -149,7 +149,7 @@ describe('generateDraw', () => {
 })
 
 describe('explainImpossible', () => {
-  const names = { h0p0: 'Sam', h1p0: 'Alex', h2p0: 'Jo' }
+  const names = { h0p0: 'Cruz', h1p0: 'Vegeta', h2p0: 'Rey' }
 
   test('names an oversized household', () => {
     const msg = explainImpossible(groups(5, 1, 2), {}, { h0: 'The Ottos' })
@@ -162,7 +162,7 @@ describe('explainImpossible', () => {
       { giverId: 'h0p0', receiverId: 'h1p0' },
       { giverId: 'h0p0', receiverId: 'h2p0' },
     ]
-    expect(explainImpossible(input, names, {})).toContain('Sam has nobody left to draw')
+    expect(explainImpossible(input, names, {})).toContain('Cruz has nobody left to draw')
   })
 
   test('names a person nobody can draw', () => {
@@ -171,7 +171,7 @@ describe('explainImpossible', () => {
       { giverId: 'h0p0', receiverId: 'h2p0' },
       { giverId: 'h1p0', receiverId: 'h2p0' },
     ]
-    expect(explainImpossible(input, names, {})).toContain('Nobody is allowed to draw Jo')
+    expect(explainImpossible(input, names, {})).toContain('Nobody is allowed to draw Rey')
   })
 })
 
@@ -179,25 +179,25 @@ describe('validateSetup', () => {
   const person = (id: string, name: string) => ({ id, name, email: '', wishlist: '' })
 
   test('needs at least three people', () => {
-    const hh: Household[] = [{ id: 'a', name: 'A', people: [person('1', 'Sam'), person('2', 'Jo')] }]
+    const hh: Household[] = [{ id: 'a', name: 'A', people: [person('1', 'Cruz'), person('2', 'Rey')] }]
     expect(validateSetup(hh)[0]).toContain('at least 3 people')
   })
 
   test('flags blank and duplicate names, ignoring case and spaces', () => {
     const hh: Household[] = [
-      { id: 'a', name: 'A', people: [person('1', 'Sam'), person('2', ' sam ')] },
+      { id: 'a', name: 'A', people: [person('1', 'Cruz'), person('2', ' cruz ')] },
       { id: 'b', name: 'B', people: [person('3', '')] },
       { id: 'c', name: 'C', people: [] },
     ]
     const problems = validateSetup(hh)
     expect(problems).toContain('One person is missing a name.')
-    expect(problems.some((p) => p.includes('"Sam"'))).toBe(true)
+    expect(problems.some((p) => p.includes('"Cruz"'))).toBe(true)
   })
 
   test('passes a good setup', () => {
     const hh: Household[] = [
-      { id: 'a', name: 'A', people: [person('1', 'Sam'), person('2', 'Jo')] },
-      { id: 'b', name: 'B', people: [person('3', 'Alex')] },
+      { id: 'a', name: 'A', people: [person('1', 'Cruz'), person('2', 'Rey')] },
+      { id: 'b', name: 'B', people: [person('3', 'Vegeta')] },
     ]
     expect(validateSetup(hh)).toEqual([])
   })

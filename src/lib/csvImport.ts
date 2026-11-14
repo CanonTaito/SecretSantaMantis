@@ -24,11 +24,10 @@ export type CsvImportResult =
 
 export const CSV_TEMPLATE = [
   'Household,Name,Email,Gift hint',
-  'The Taitos,Sam,sam@example.com,Loves board games',
-  'The Taitos,Jo,,',
-  'The Ottos,Alex,alex@example.com,"Coffee, tea or anything cosy"',
-  'The Ottos,Priya,,',
-  'Grandma Rose,Grandma Rose,,Gardening gloves',
+  'The Taitos,Cruz,cruz@example.com,Loves online gaming',
+  'The Taitos,Rey,,',
+  'The Ottos,Vegeta,vegeta@example.com,Batman',
+  'Grandma Lina,Grandma Lina,,Gardening',
 ].join('\r\n')
 
 const LIMITS = { household: 60, name: 60, email: 120, wishlist: 300 }

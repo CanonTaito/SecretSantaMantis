@@ -1,4 +1,4 @@
-# 🎅 Secret Santa
+# 🎅🏾 Secret Santa
 
 A free, no-sign-up Secret Santa generator for families. People in the same household never draw each other, and everyone gets their own private link to unwrap their match.
 
@@ -6,10 +6,10 @@ No accounts, no server, no email service. It all runs in your browser.
 
 ## How it works
 
-1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Optionally, add a gift hint for each person and extra rules like "Sam can't draw Alex" (handy for not repeating last year's match).
+1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Optionally, add a gift hint for each person and extra rules like "Cruz can't draw Vegeta" (handy for not repeating last year's match).
 2. **Draw.** Press the button. Nobody draws themselves, anyone in their own household, or anyone a rule blocks. If the rules make a draw impossible, the app tells you why — for example, when one household is more than half the group.
 3. **Share.** Every person gets a private link. Copy it into a text, use your phone's share sheet, or press **Email** to open a ready-to-send message in your own email app. Tick people off as you go.
-4. **Unwrap.** When someone opens their link they see "Hi Sam!", tap a present, and confetti reveals who they're buying for, along with that person's gift hint, the budget and the date.
+4. **Unwrap.** When someone opens their link they see "Hi Cruz!", tap a present, and confetti reveals who they're buying for, along with that person's gift hint, the budget and the date.
 
 As the organizer, you never see the matches unless you choose to.
 
@@ -19,10 +19,10 @@ Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** o
 
 | Household | Name | Email | Gift hint |
 | --- | --- | --- | --- |
-| The Taitos | Sam | sam@example.com | Loves board games |
-| The Taitos | Jo | | |
-| The Ottos | Alex | alex@example.com | Coffee, tea or anything cosy |
-| Grandma Rose | Grandma Rose | | Gardening gloves |
+| The Taitos | Cruz | cruz@example.com | Loves online gaming |
+| The Taitos | Rey | | |
+| The Ottos | Vegeta | vegeta@example.com | Batman |
+| Grandma Lina | Grandma Lina | | Gardening |
 
 - **Name** is required. **Email** and **Gift hint** are optional.
 - Rows with the same household name (any capitalisation) go together. A blank household means that person lives on their own.
