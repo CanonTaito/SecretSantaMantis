@@ -3,6 +3,7 @@ import { useConfirm } from './components/ConfirmDialog.tsx'
 import { Stepper } from './components/Stepper.tsx'
 import { SetupStep } from './components/setup/SetupStep.tsx'
 import { DrawStep } from './components/draw/DrawStep.tsx'
+import { ShareStep } from './components/share/ShareStep.tsx'
 import type { Step } from './types.ts'
 
 function Organizer() {
@@ -26,7 +27,7 @@ function Organizer() {
 
       {state.step === 'setup' && <SetupStep state={state} dispatch={dispatch} confirm={confirm} />}
       {state.step === 'draw' && <DrawStep state={state} dispatch={dispatch} />}
-      {state.step === 'share' && <p className="card p-6 text-center">Coming next.</p>}
+      {state.step === 'share' && <ShareStep state={state} dispatch={dispatch} confirm={confirm} />}
 
       {dialog}
     </div>

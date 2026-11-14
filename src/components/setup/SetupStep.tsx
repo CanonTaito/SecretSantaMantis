@@ -6,6 +6,7 @@ import { householdLabel } from '../../lib/labels.ts'
 import { EventDetailsForm } from './EventDetailsForm.tsx'
 import { HouseholdCard } from './HouseholdCard.tsx'
 import { ExclusionsEditor } from './ExclusionsEditor.tsx'
+import { BackupControls } from '../share/BackupControls.tsx'
 
 interface Props {
   state: SantaState
@@ -35,6 +36,25 @@ export function SetupStep({ state, dispatch, confirm }: Props) {
 
   return (
     <div className="space-y-6">
+      {locked ? (
+        <div className="card flex flex-wrap items-center justify-between gap-3 border-pine-200 bg-pine-50 p-4">
+          <p className="text-sm text-pine-800">
+            🔒 <strong>Names are drawn</strong>, so the setup is locked to keep sent links correct.
+          </p>
+          <button type="button" className="btn-green" onClick={() => dispatch({ type: 'goTo', step: 'share' })}>
+            Back to sharing →
+          </button>
+        </div>
+      ) : (
+        <div className="card flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-pine-800/80">
+            <strong className="text-pine-900">Already ran a draw?</strong> Upload your backup to pick up where you left
+            off.
+          </p>
+          <BackupControls state={state} dispatch={dispatch} confirm={confirm} mode="upload" />
+        </div>
+      )}
+
       <EventDetailsForm event={state.event} dispatch={dispatch} locked={locked} />
 
       <section aria-labelledby="households-heading">
@@ -82,9 +102,15 @@ export function SetupStep({ state, dispatch, confirm }: Props) {
           <strong className="text-pine-900">{state.households.length}</strong>{' '}
           {state.households.length === 1 ? 'household' : 'households'}
         </span>
-        <button type="button" className="btn-primary" onClick={() => dispatch({ type: 'goTo', step: 'draw' })}>
-          Next: draw names →
-        </button>
+        {locked ? (
+          <button type="button" className="btn-green" onClick={() => dispatch({ type: 'goTo', step: 'share' })}>
+            Back to sharing →
+          </button>
+        ) : (
+          <button type="button" className="btn-primary" onClick={() => dispatch({ type: 'goTo', step: 'draw' })}>
+            Next: draw names →
+          </button>
+        )}
       </div>
     </div>
   )
