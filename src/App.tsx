@@ -8,6 +8,7 @@ import { ShareStep } from './components/share/ShareStep.tsx'
 import { RevealPage } from './components/reveal/RevealPage.tsx'
 import { useHash } from './hooks/useHash.ts'
 import { Snowfall } from './components/Snowfall.tsx'
+import { SantaFace } from './components/SantaFace.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
@@ -28,9 +29,7 @@ function Organizer() {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-8 pb-16 sm:pt-12">
       <header className="mb-8 text-center">
-        <div className="text-5xl" aria-hidden>
-          🎅
-        </div>
+        <SantaFace size={88} className="mx-auto drop-shadow-sm" />
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-pine-800 sm:text-5xl">Secret Santa</h1>
         <p className="mx-auto mt-2 max-w-md text-pine-800/75">
           Draw names, keep households apart, and send everyone their own secret link.
