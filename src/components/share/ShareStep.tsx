@@ -116,7 +116,7 @@ export function ShareStep({ state, dispatch, confirm }: Props) {
         <BackupControls state={state} dispatch={dispatch} confirm={confirm} />
       </section>
 
-      <MasterList state={state} confirm={confirm} />
+      <MasterList state={state} dispatch={dispatch} confirm={confirm} />
 
       <div className="flex flex-wrap justify-between gap-2">
         <button type="button" className="btn-secondary" onClick={redraw}>

@@ -175,3 +175,31 @@ export function validateSetup(households: Household[]): string[] {
 
   return problems
 }
+
+export interface Reassignment {
+  /** The person who currently buys for the new receiver; they take the giver's old receiver. */
+  otherGiverId: string
+  otherNewReceiverId: string
+  /** False when either side of the trade would break a household or exclusion rule. */
+  ok: boolean
+}
+
+/**
+ * Plan giving `giverId` a new receiver by trading with whoever has that receiver now,
+ * so everyone still gives and receives exactly once. Null if nothing would change.
+ */
+export function planReassign(
+  pairs: Pairs,
+  allowed: Map<string, Set<string>>,
+  giverId: string,
+  newReceiverId: string,
+): Reassignment | null {
+  const oldReceiverId = pairs[giverId]
+  if (oldReceiverId === undefined || oldReceiverId === newReceiverId) return null
+  const otherGiverId = Object.keys(pairs).find((g) => pairs[g] === newReceiverId)
+  if (otherGiverId === undefined) return null
+  const ok =
+    (allowed.get(giverId)?.has(newReceiverId) ?? false) &&
+    (allowed.get(otherGiverId)?.has(oldReceiverId) ?? false)
+  return { otherGiverId, otherNewReceiverId: oldReceiverId, ok }
+}

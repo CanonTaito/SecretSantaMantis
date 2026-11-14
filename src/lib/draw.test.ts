@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import {
+  allowedReceivers,
+  planReassign,
   buildDrawInput,
   explainImpossible,
   generateDraw,
@@ -200,5 +202,33 @@ describe('validateSetup', () => {
       { id: 'b', name: 'B', people: [person('3', 'Vegeta')] },
     ]
     expect(validateSetup(hh)).toEqual([])
+  })
+})
+
+describe('planReassign', () => {
+  // Four people living alone, drawn in a loop a->b->c->d->a.
+  const input = groups(1, 1, 1, 1)
+  const pairs = { h0p0: 'h1p0', h1p0: 'h2p0', h2p0: 'h3p0', h3p0: 'h0p0' }
+
+  test('trades receivers with whoever has the new one', () => {
+    const plan = planReassign(pairs, allowedReceivers(input), 'h0p0', 'h2p0')
+    expect(plan).toEqual({ otherGiverId: 'h1p0', otherNewReceiverId: 'h1p0', ok: false })
+  })
+
+  test('is ok when both sides of the trade are allowed', () => {
+    const plan = planReassign(pairs, allowedReceivers(input), 'h0p0', 'h3p0')
+    expect(plan).toEqual({ otherGiverId: 'h2p0', otherNewReceiverId: 'h1p0', ok: true })
+  })
+
+  test('blocks trades that break a household or exclusion rule', () => {
+    const withRule: DrawInput = { ...input, exclusions: [{ giverId: 'h2p0', receiverId: 'h1p0' }] }
+    expect(planReassign(pairs, allowedReceivers(withRule), 'h0p0', 'h3p0')!.ok).toBe(false)
+    const housemates = groups(2, 1, 1)
+    const hp = { h0p0: 'h1p0', h1p0: 'h0p1', h0p1: 'h2p0', h2p0: 'h0p0' }
+    expect(planReassign(hp, allowedReceivers(housemates), 'h0p0', 'h0p1')!.ok).toBe(false)
+  })
+
+  test('returns null when nothing would change', () => {
+    expect(planReassign(pairs, allowedReceivers(input), 'h0p0', 'h1p0')).toBeNull()
   })
 })

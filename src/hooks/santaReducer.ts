@@ -16,6 +16,7 @@ export type SantaAction =
   | { type: 'goTo'; step: Step }
   | { type: 'setDraw'; pairs: Record<string, string> }
   | { type: 'markSent'; giverId: string; sent: boolean }
+  | { type: 'swapReceivers'; giverA: string; giverB: string }
   | { type: 'clearDraw' }
   | { type: 'restore'; state: SantaState }
   | { type: 'reset' }
@@ -139,6 +140,18 @@ export function santaReducer(state: SantaState, action: SantaAction): SantaState
       if (action.sent) sent[action.giverId] = true
       else delete sent[action.giverId]
       return { ...state, draw: { ...state.draw, sent } }
+    }
+
+    case 'swapReceivers': {
+      const draw = state.draw
+      const a = draw?.pairs[action.giverA]
+      const b = draw?.pairs[action.giverB]
+      if (!draw || a === undefined || b === undefined || action.giverA === action.giverB) return state
+      // Both people's old links now show the wrong name, so they need sending again.
+      const sent = { ...draw.sent }
+      delete sent[action.giverA]
+      delete sent[action.giverB]
+      return { ...state, draw: { ...draw, pairs: { ...draw.pairs, [action.giverA]: b, [action.giverB]: a }, sent } }
     }
 
     case 'clearDraw':

@@ -109,3 +109,18 @@ describe('reducer', () => {
     expect(santaReducer(s, { type: 'addExclusion', giverId: 'a', receiverId: 'a', mutual: false })).toBe(s)
   })
 })
+
+describe('swapReceivers', () => {
+  test('swaps two matches and un-ticks both as sent', () => {
+    const s = sample()
+    const next = santaReducer(s, { type: 'swapReceivers', giverA: 'a', giverB: 'b' })
+    expect(next.draw!.pairs).toEqual({ a: 'c', b: 'd', c: 'a', d: 'b' })
+    expect(next.draw!.sent).toEqual({})
+  })
+
+  test('works while setup is locked, and ignores bad ids', () => {
+    const s = sample()
+    expect(santaReducer(s, { type: 'swapReceivers', giverA: 'a', giverB: 'zzz' })).toBe(s)
+    expect(santaReducer(s, { type: 'swapReceivers', giverA: 'a', giverB: 'a' })).toBe(s)
+  })
+})
