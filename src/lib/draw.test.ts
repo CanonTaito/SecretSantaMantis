@@ -152,8 +152,8 @@ describe('explainImpossible', () => {
   const names = { h0p0: 'Sam', h1p0: 'Alex', h2p0: 'Jo' }
 
   test('names an oversized household', () => {
-    const msg = explainImpossible(groups(5, 1, 2), {}, { h0: 'The Smiths' })
-    expect(msg).toContain('The Smiths are 5 of 8 people')
+    const msg = explainImpossible(groups(5, 1, 2), {}, { h0: 'The Ottos' })
+    expect(msg).toContain('The Ottos are 5 of 8 people')
   })
 
   test('names a person with nobody to draw', () => {

@@ -11,7 +11,7 @@ function sample(): SantaState {
     households: [
       {
         id: 'h1',
-        name: 'The Smiths',
+        name: 'The Taitos',
         people: [
           { id: 'a', name: 'Sam', email: 'sam@example.com', wishlist: 'Books' },
           { id: 'b', name: 'Jo', email: '', wishlist: '' },

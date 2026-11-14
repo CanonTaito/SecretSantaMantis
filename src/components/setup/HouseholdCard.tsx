@@ -5,6 +5,12 @@ import { householdLabel } from '../../lib/labels.ts'
 import { PersonRow } from './PersonRow.tsx'
 
 const STRIPES = ['bg-berry-500', 'bg-pine-500', 'bg-gold-400', 'bg-pine-700', 'bg-berry-700']
+const EXAMPLES = ['The Taitos', 'The Ottos']
+
+function placeholderFor(index: number) {
+  const example = EXAMPLES[index]
+  return example ? `Household ${index + 1} (e.g. ${example})` : `Household ${index + 1}`
+}
 
 interface Props {
   household: Household
@@ -26,7 +32,7 @@ export function HouseholdCard({ household, index, dispatch, locked, onRemove }: 
           </span>
           <input
             className="input border-transparent bg-transparent font-display text-lg font-bold focus:bg-white"
-            placeholder={`Household ${index + 1} (e.g. The Smiths)`}
+            placeholder={placeholderFor(index)}
             aria-label={`Name of household ${index + 1}`}
             value={household.name}
             onChange={(e) => dispatch({ type: 'renameHousehold', householdId: household.id, name: e.target.value })}
