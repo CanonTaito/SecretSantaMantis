@@ -4,6 +4,9 @@ import { Stepper } from './components/Stepper.tsx'
 import { SetupStep } from './components/setup/SetupStep.tsx'
 import { DrawStep } from './components/draw/DrawStep.tsx'
 import { ShareStep } from './components/share/ShareStep.tsx'
+import { RevealPage } from './components/reveal/RevealPage.tsx'
+import { useHash } from './hooks/useHash.ts'
+import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
 function Organizer() {
@@ -35,5 +38,9 @@ function Organizer() {
 }
 
 export default function App() {
+  const hash = useHash()
+  const reveal = revealFromHash(hash)
+  // `undefined` = not a reveal link; `null` = a reveal link that couldn't be read.
+  if (reveal !== undefined) return <RevealPage key={hash} payload={reveal} />
   return <Organizer />
 }
