@@ -5,7 +5,7 @@ const RED = '#c8323b'
 const RED_DARK = '#a8262f'
 const WHITE = '#fffdf8'
 
-/** Our Santa: warm brown skin, glasses, and a frangipani tucked in his hat. */
+/** Our Santa: warm brown skin, sunglasses, and 685 on his hat. */
 export function SantaFace({ size = 72, className = '' }: { size?: number; className?: string }) {
   return (
     <svg
@@ -13,7 +13,7 @@ export function SantaFace({ size = 72, className = '' }: { size?: number; classN
       width={size}
       height={size}
       role="img"
-      aria-label="Santa with glasses"
+      aria-label="Santa in sunglasses with 685 on his hat"
       className={className}
     >
       {/* hat */}
@@ -31,13 +31,19 @@ export function SantaFace({ size = 72, className = '' }: { size?: number; classN
       {/* brim */}
       <rect x="20" y="40" width="80" height="15" rx="7.5" fill={WHITE} />
 
-      {/* frangipani on the brim */}
-      <g transform="translate(31 45)">
-        {[0, 72, 144, 216, 288].map((angle) => (
-          <ellipse key={angle} cx="0" cy="-5.5" rx="3.6" ry="6" fill="#ffffff" stroke="#f0cf7c" strokeWidth="0.8" transform={`rotate(${angle})`} />
-        ))}
-        <circle r="2.6" fill="#e3b341" />
-      </g>
+      {/* 685 on the brim */}
+      <text
+        x="60"
+        y="51.5"
+        textAnchor="middle"
+        fontFamily="Fraunces, Georgia, serif"
+        fontWeight="800"
+        fontSize="12"
+        letterSpacing="1"
+        fill={RED}
+      >
+        685
+      </text>
 
       {/* cheeks */}
       <circle cx="42" cy="77" r="5" fill="#c8323b" opacity="0.28" />
@@ -61,17 +67,18 @@ export function SantaFace({ size = 72, className = '' }: { size?: number; classN
       <path d="M43 57 Q 50 53 56 57" fill="none" stroke={WHITE} strokeWidth="3" strokeLinecap="round" />
       <path d="M64 57 Q 70 53 77 57" fill="none" stroke={WHITE} strokeWidth="3" strokeLinecap="round" />
 
-      {/* eyes */}
-      <circle cx="50" cy="66" r="2.6" fill={FRAME} />
-      <circle cx="70" cy="66" r="2.6" fill={FRAME} />
-
-      {/* glasses */}
-      <g fill="#ffffff" fillOpacity="0.18" stroke={FRAME} strokeWidth="2.4">
-        <circle cx="50" cy="66" r="8" />
-        <circle cx="70" cy="66" r="8" />
+      {/* sunglasses */}
+      <path d="M41 64 L 34 62 M79 64 L 86 62" stroke={FRAME} strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M57.5 63.5 Q 60 61.5 62.5 63.5" fill="none" stroke={FRAME} strokeWidth="2.6" />
+      <g fill="#1a1410" stroke={FRAME} strokeWidth="2">
+        <path d="M40 61 H 58 V 66 Q 58 73 49 73 Q 40 73 40 66 Z" />
+        <path d="M62 61 H 80 V 66 Q 80 73 71 73 Q 62 73 62 66 Z" />
       </g>
-      <path d="M58 65 Q 60 62.5 62 65" fill="none" stroke={FRAME} strokeWidth="2.2" />
-      <path d="M42 65 L 34 63 M78 65 L 86 63" stroke={FRAME} strokeWidth="2.2" strokeLinecap="round" />
+      {/* lens shine */}
+      <g stroke="#ffffff" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M44 64 L 47 62.5" />
+        <path d="M66 64 L 69 62.5" />
+      </g>
     </svg>
   )
 }
