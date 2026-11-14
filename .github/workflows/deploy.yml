@@ -28,6 +28,7 @@ jobs:
       - run: npm run build
         env:
           VITE_WEB3FORMS_KEY: ${{ vars.WEB3FORMS_KEY }}
+          VITE_AMAZON_TAG: ${{ vars.AMAZON_TAG }}
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

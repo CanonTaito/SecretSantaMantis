@@ -50,6 +50,7 @@ There is no server, so the draw lives in three places:
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
+- Gift-idea links go to amazon.com.au with the site's Associates tag; nothing about the match or the people is included in them.
 - The **Advertise here** form is the only thing that sends data off the page: when someone presses Send, their name, email, phone and message go to [Web3Forms](https://web3forms.com), which emails them to the site owner.
 
 ## Ads
@@ -67,6 +68,14 @@ The site has one sponsor banner, on the setup screens and on the reveal page (be
 3. For local testing: copy `.env.example` to `.env` and paste the key after `VITE_WEB3FORMS_KEY=`. `.env` is git-ignored.
 
 Without a key, the "Advertise here" banner stays hidden.
+
+## Gift ideas (Amazon)
+
+After someone unwraps their match, the reveal page suggests a few gift ideas that fit the budget and, for children, their age. Each opens a search on amazon.com.au.
+
+- The lists live in [`src/gifts/gifts.ts`](src/gifts/gifts.ts): adults, kids 0–3, 4–7, 8–12, and teens, each idea tagged with a price band (under $20, $20–50, $50–100, $100+). Ideas are never shown above the budget.
+- The links carry the site's Amazon Associates tracking ID, set as the `AMAZON_TAG` repository variable (or `VITE_AMAZON_TAG` in `.env` locally). Without it, the section is hidden.
+- As an Amazon Associate we earn from qualifying purchases. Prices aren't shown (Amazon only allows prices from its own API), and gift-idea links are never put in the emails organisers send.
 
 ## Run it locally
 

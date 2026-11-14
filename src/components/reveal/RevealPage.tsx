@@ -4,6 +4,7 @@ import type { RevealPayload } from '../../lib/revealLink.ts'
 import { formatDate } from '../../lib/labels.ts'
 import { GiftBox, type GiftPhase } from './GiftBox.tsx'
 import { AdBanner } from '../ads/AdBanner.tsx'
+import { GiftIdeas } from './GiftIdeas.tsx'
 
 const COLORS = ['#c8323b', '#2f7a55', '#e3b341', '#fffdf8']
 
@@ -132,6 +133,8 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
           </div>
         </div>
       )}
+
+      {phase === 'open' && <GiftIdeas receiver={payload.r} budget={payload.b} isChild={payload.k === '1'} age={payload.a} />}
 
       <AdBanner className="mt-12 w-full" />
 
