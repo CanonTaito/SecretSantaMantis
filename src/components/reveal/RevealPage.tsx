@@ -29,7 +29,7 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
   const heading = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
-    document.title = payload ? `🎁 ${payload.g}'s Secret Santa` : 'Secret Santa'
+    document.title = payload ? `🎁 ${payload.g}'s Secret Santa` : 'Secret Santa Mantis'
     return () => clearTimeout(timer.current)
   }, [payload])
 
