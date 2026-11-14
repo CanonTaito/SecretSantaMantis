@@ -2,6 +2,7 @@ import { useSantaState } from './hooks/useSantaState.ts'
 import { useConfirm } from './components/ConfirmDialog.tsx'
 import { Stepper } from './components/Stepper.tsx'
 import { SetupStep } from './components/setup/SetupStep.tsx'
+import { DrawStep } from './components/draw/DrawStep.tsx'
 import type { Step } from './types.ts'
 
 function Organizer() {
@@ -24,7 +25,8 @@ function Organizer() {
       <Stepper current={state.step} reachable={reachable} onSelect={(step) => dispatch({ type: 'goTo', step })} />
 
       {state.step === 'setup' && <SetupStep state={state} dispatch={dispatch} confirm={confirm} />}
-      {state.step !== 'setup' && <p className="card p-6 text-center">Coming next.</p>}
+      {state.step === 'draw' && <DrawStep state={state} dispatch={dispatch} />}
+      {state.step === 'share' && <p className="card p-6 text-center">Coming next.</p>}
 
       {dialog}
     </div>
