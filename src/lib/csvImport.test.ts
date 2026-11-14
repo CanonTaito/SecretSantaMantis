@@ -32,7 +32,7 @@ describe('importPeopleCsv', () => {
       email: 'vegeta@example.com',
       wishlist: 'Batman',
       isChild: true,
-      age: '',
+      age: '2',
     })
     expect(result.households[0]!.people.map((p) => [p.name, p.isChild, p.age])).toEqual([
       ['Cruz', false, ''],

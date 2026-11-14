@@ -28,7 +28,7 @@ export const CSV_TEMPLATE = [
   'Household,Name,Email,Gift hint,Child,Age',
   'The Taitos,Cruz,cruz@example.com,Loves online gaming,,',
   'The Taitos,Rey,,,Yes,8',
-  'The Ottos,Vegeta,vegeta@example.com,Batman,Yes,',
+  'The Ottos,Vegeta,vegeta@example.com,Batman,Yes,2',
   'Grandma Lina,Grandma Lina,,Gardening,,',
 ].join('\r\n')
 

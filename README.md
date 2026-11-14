@@ -21,7 +21,7 @@ Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** o
 | --- | --- | --- | --- | --- | --- |
 | The Taitos | Cruz | cruz@example.com | Loves online gaming | | |
 | The Taitos | Rey | | | Yes | 8 |
-| The Ottos | Vegeta | vegeta@example.com | Batman | Yes | |
+| The Ottos | Vegeta | vegeta@example.com | Batman | Yes | 2 |
 | Grandma Lina | Grandma Lina | | Gardening | | |
 
 - **Name** is required. **Email**, **Gift hint**, **Child** and **Age** are optional.
