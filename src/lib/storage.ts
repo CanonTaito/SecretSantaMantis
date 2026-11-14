@@ -1,3 +1,4 @@
+import { downloadText } from './download.ts'
 import type { Draw, EventDetails, Exclusion, Household, Person, SantaState, Step } from '../types.ts'
 
 export const STORAGE_KEY = 'secret-santa-v1'
@@ -155,13 +156,5 @@ export function backupFileName(now = new Date()): string {
 }
 
 export function exportBackup(state: SantaState): void {
-  const blob = new Blob([serializeBackup(state)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = backupFileName()
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  downloadText(backupFileName(), serializeBackup(state), 'application/json')
 }

@@ -1,9 +1,10 @@
-import type { EventDetails, Person, SantaState, Step } from '../types.ts'
+import type { EventDetails, Household, Person, SantaState, Step } from '../types.ts'
 import { createInitialState, newHousehold, newId, newPerson } from '../lib/storage.ts'
 
 export type SantaAction =
   | { type: 'setEvent'; field: keyof EventDetails; value: string }
   | { type: 'addHousehold' }
+  | { type: 'setHouseholds'; households: Household[] }
   | { type: 'renameHousehold'; householdId: string; name: string }
   | { type: 'removeHousehold'; householdId: string }
   | { type: 'addPerson'; householdId: string }
@@ -22,6 +23,7 @@ export type SantaAction =
 const SETUP_EDITS = new Set<SantaAction['type']>([
   'setEvent',
   'addHousehold',
+  'setHouseholds',
   'renameHousehold',
   'removeHousehold',
   'addPerson',
@@ -47,6 +49,15 @@ export function santaReducer(state: SantaState, action: SantaAction): SantaState
 
     case 'addHousehold':
       return { ...state, households: [...state.households, newHousehold()] }
+
+    case 'setHouseholds': {
+      const ids = new Set(action.households.flatMap((h) => h.people.map((p) => p.id)))
+      return {
+        ...state,
+        households: action.households,
+        exclusions: state.exclusions.filter((e) => ids.has(e.giverId) && ids.has(e.receiverId)),
+      }
+    }
 
     case 'renameHousehold':
       return {

@@ -13,6 +13,22 @@ No accounts, no server, no email service. It all runs in your browser.
 
 As the organizer, you never see the matches unless you choose to.
 
+## Importing a list from a spreadsheet
+
+Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** on the Set up screen. Use these columns (press **Download template** for an example file):
+
+| Household | Name | Email | Gift hint |
+| --- | --- | --- | --- |
+| The Taitos | Sam | sam@example.com | Loves board games |
+| The Taitos | Jo | | |
+| The Ottos | Alex | alex@example.com | Coffee, tea or anything cosy |
+| Grandma Rose | Grandma Rose | | Gardening gloves |
+
+- **Name** is required. **Email** and **Gift hint** are optional.
+- Rows with the same household name (any capitalisation) go together. A blank household means that person lives on their own.
+- Imported people are added to whoever is already on the list. Anyone already listed is skipped, so importing the same file twice is safe.
+- Comma, semicolon and tab separated files all work, including "CSV UTF-8" from Excel.
+
 ## Where the matches are kept
 
 There is no server, so the draw lives in three places:

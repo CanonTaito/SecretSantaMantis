@@ -7,6 +7,7 @@ import { EventDetailsForm } from './EventDetailsForm.tsx'
 import { HouseholdCard } from './HouseholdCard.tsx'
 import { ExclusionsEditor } from './ExclusionsEditor.tsx'
 import { BackupControls } from '../share/BackupControls.tsx'
+import { CsvImport } from './CsvImport.tsx'
 
 interface Props {
   state: SantaState
@@ -58,7 +59,7 @@ export function SetupStep({ state, dispatch, confirm }: Props) {
       <EventDetailsForm event={state.event} dispatch={dispatch} locked={locked} />
 
       <section aria-labelledby="households-heading">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+        <div className="mb-3 flex flex-col gap-3">
           <div>
             <h2 id="households-heading" className="text-lg font-bold">
               Households
@@ -67,6 +68,7 @@ export function SetupStep({ state, dispatch, confirm }: Props) {
               People in the same household never draw each other. Someone living alone is a household of one.
             </p>
           </div>
+          {!locked && <CsvImport households={state.households} dispatch={dispatch} />}
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {state.households.map((household, i) => (
