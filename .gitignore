@@ -9,3 +9,6 @@ coverage
 !.vscode/extensions.json
 .idea
 .claude/
+.env
+.env.*
+!.env.example

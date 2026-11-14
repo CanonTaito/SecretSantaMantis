@@ -9,6 +9,7 @@ import { RevealPage } from './components/reveal/RevealPage.tsx'
 import { useHash } from './hooks/useHash.ts'
 import { Snowfall } from './components/Snowfall.tsx'
 import { SantaFace } from './components/SantaFace.tsx'
+import { AdBanner } from './components/ads/AdBanner.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
@@ -41,6 +42,8 @@ function Organizer() {
       {state.step === 'setup' && <SetupStep state={state} dispatch={dispatch} confirm={confirm} />}
       {state.step === 'draw' && <DrawStep state={state} dispatch={dispatch} />}
       {state.step === 'share' && <ShareStep state={state} dispatch={dispatch} confirm={confirm} />}
+
+      <AdBanner className="mt-10" />
 
       {dialog}
     </div>

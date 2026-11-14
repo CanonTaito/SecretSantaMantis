@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti'
 import type { RevealPayload } from '../../lib/revealLink.ts'
 import { formatDate } from '../../lib/labels.ts'
 import { GiftBox, type GiftPhase } from './GiftBox.tsx'
+import { AdBanner } from '../ads/AdBanner.tsx'
 
 const COLORS = ['#c8323b', '#2f7a55', '#e3b341', '#fffdf8']
 
@@ -132,7 +133,9 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
         </div>
       )}
 
-      <a className="mt-auto pt-12 text-sm text-pine-700/60 underline-offset-4 hover:underline" href={homeHref()}>
+      <AdBanner className="mt-12 w-full" />
+
+      <a className="mt-auto pt-10 text-sm text-pine-700/60 underline-offset-4 hover:underline" href={homeHref()}>
         Organizing your own? Start a Secret Santa
       </a>
     </main>

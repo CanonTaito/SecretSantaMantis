@@ -49,6 +49,24 @@ There is no server, so the draw lives in three places:
 - Each match is stored inside its link, in the part after `#`. Browsers never send that part to a web server, so GitHub Pages never sees names or matches.
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
+- The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
+- The **Advertise here** form is the only thing that sends data off the page: when someone presses Send, their name, email, phone and message go to [Web3Forms](https://web3forms.com), which emails them to the site owner.
+
+## Ads
+
+The site has one sponsor banner, on the setup screens and on the reveal page (below the present, never covering it).
+
+**Managing ads.** Ads live in [`src/ads/ads.ts`](src/ads/ads.ts). Each ad has a business name, one line of text, a button label, a link, an optional logo (put the file in `public/ads/`), the regions that see it, and optional start and end dates (`YYYY-MM-DD`, both days included). To sell a slot, add an entry and push; it starts and stops on its dates by itself.
+
+**Regions** come from the visitor's time zone: `NZ` (New Zealand), `QLD` (Brisbane and the rest of Queensland; time zones can't tell them apart) and `OTHER`. To preview what a region sees, add `?region=NZ` or `?region=QLD` to the page address.
+
+**Advertise here.** When no ad is running for a visitor's region, they see an "Advertise here" banner with an enquiry form that emails you. To switch it on:
+
+1. Go to [web3forms.com](https://web3forms.com), enter the email address that should receive enquiries, and copy the access key they send you. Your email stays with Web3Forms; it never appears in this repo or on the site.
+2. For the live site: in the repo go to **Settings → Secrets and variables → Actions → Variables** and add `WEB3FORMS_KEY` with that key (or run `gh variable set WEB3FORMS_KEY`), then re-run the deploy.
+3. For local testing: copy `.env.example` to `.env` and paste the key after `VITE_WEB3FORMS_KEY=`. `.env` is git-ignored.
+
+Without a key, the "Advertise here" banner stays hidden.
 
 ## Run it locally
 
