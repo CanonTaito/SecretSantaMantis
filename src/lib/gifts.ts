@@ -56,3 +56,15 @@ export function pickIdeas(ideas: readonly GiftIdea[], band: Band, limit = 5): Gi
 export function amazonSearchUrl(query: string, tag: string): string {
   return `https://www.amazon.com.au/s?k=${encodeURIComponent(query)}&tag=${encodeURIComponent(tag)}`
 }
+
+const MAX_HINT_QUERY = 80
+
+/** The gift hint as an Amazon search phrase: one line, trimmed, capped. Null if there's no hint. */
+export function hintQuery(hint: string | undefined): string | null {
+  const q = (hint ?? '').replace(/\s+/g, ' ').trim()
+  if (!q) return null
+  if (q.length <= MAX_HINT_QUERY) return q
+  const cut = q.slice(0, MAX_HINT_QUERY)
+  const lastSpace = cut.lastIndexOf(' ')
+  return (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim()
+}

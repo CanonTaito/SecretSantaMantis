@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { amazonSearchUrl, audienceFor, bandFor, BANDS, parseBudget, pickIdeas, type GiftIdea } from './gifts.ts'
+import { amazonSearchUrl, audienceFor, bandFor, BANDS, hintQuery, parseBudget, pickIdeas, type GiftIdea } from './gifts.ts'
 import { GIFT_IDEAS } from '../gifts/gifts.ts'
 
 describe('parseBudget', () => {
@@ -61,4 +61,21 @@ test('amazon links go to amazon.com.au search with the tag', () => {
   expect(url.pathname).toBe('/s')
   expect(url.searchParams.get('k')).toBe('LEGO Classic & Duplo')
   expect(url.searchParams.get('tag')).toBe('secretsantama-22')
+})
+
+describe('hintQuery', () => {
+  test('tidies the hint into one search line', () => {
+    expect(hintQuery('Batman')).toBe('Batman')
+    expect(hintQuery('  Loves gardening\n gloves  ')).toBe('Loves gardening gloves')
+    expect(hintQuery('')).toBeNull()
+    expect(hintQuery('   ')).toBeNull()
+    expect(hintQuery(undefined)).toBeNull()
+  })
+
+  test('caps long hints at a word boundary', () => {
+    const long = 'word '.repeat(40)
+    const q = hintQuery(long)!
+    expect(q.length).toBeLessThanOrEqual(80)
+    expect(q.endsWith('word')).toBe(true)
+  })
 })

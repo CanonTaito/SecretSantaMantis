@@ -134,7 +134,7 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
         </div>
       )}
 
-      {phase === 'open' && <GiftIdeas receiver={payload.r} budget={payload.b} isChild={payload.k === '1'} age={payload.a} />}
+      {phase === 'open' && <GiftIdeas receiver={payload.r} budget={payload.b} hint={payload.w} isChild={payload.k === '1'} age={payload.a} />}
 
       <AdBanner className="mt-12 w-full" />
 

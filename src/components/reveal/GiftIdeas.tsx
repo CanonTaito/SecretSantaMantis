@@ -1,20 +1,23 @@
 import { GIFT_IDEAS } from '../../gifts/gifts.ts'
-import { amazonSearchUrl, audienceFor, bandFor, parseBudget, pickIdeas } from '../../lib/gifts.ts'
+import { amazonSearchUrl, audienceFor, bandFor, hintQuery, parseBudget, pickIdeas } from '../../lib/gifts.ts'
 
 export const AMAZON_TAG = (import.meta.env.VITE_AMAZON_TAG ?? '').trim()
 
 interface Props {
   receiver: string
   budget?: string
+  /** Their own gift hint, searched on Amazon as the first idea. */
+  hint?: string
   isChild: boolean
   age?: string
 }
 
 /** Amazon gift ideas matched to the budget and the receiver's age. Hidden without an Associates tag. */
-export function GiftIdeas({ receiver, budget, isChild, age }: Props) {
+export function GiftIdeas({ receiver, budget, hint, isChild, age }: Props) {
   if (!AMAZON_TAG) return null
   const ideas = pickIdeas(GIFT_IDEAS[audienceFor(isChild, age)], bandFor(parseBudget(budget)))
-  if (ideas.length === 0) return null
+  const fromHint = hintQuery(hint)
+  if (ideas.length === 0 && !fromHint) return null
 
   return (
     <section className="card mt-6 w-full overflow-hidden text-left" aria-labelledby="gift-ideas-heading">
@@ -28,6 +31,22 @@ export function GiftIdeas({ receiver, budget, isChild, age }: Props) {
         </p>
       </div>
       <ul className="divide-y divide-cream-200">
+        {fromHint && (
+          <li>
+            <a
+              href={amazonSearchUrl(fromHint, AMAZON_TAG)}
+              target="_blank"
+              rel="noopener sponsored nofollow"
+              className="flex items-center gap-3 bg-gold-300/15 px-5 py-3 transition hover:bg-gold-300/30"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-semibold text-pine-900">Search for “{fromHint}”</span>
+                <span className="block text-sm text-pine-800/70">Their own gift hint, searched on Amazon.</span>
+              </span>
+              <span className="shrink-0 text-sm font-semibold text-pine-600">Search ↗</span>
+            </a>
+          </li>
+        )}
         {ideas.map((idea) => (
           <li key={idea.name}>
             <a
