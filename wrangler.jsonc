@@ -1,0 +1,9 @@
+// Cloudflare Workers config: serves the built site in ./dist as static files (no server code).
+// Deployed by Cloudflare's Git integration on every push to main.
+{
+  "name": "secretsantamantis",
+  "compatibility_date": "2026-11-14",
+  "assets": {
+    "directory": "./dist"
+  }
+}
