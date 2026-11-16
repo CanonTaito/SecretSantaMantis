@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "A no-backend Secret Santa generator that keeps households apart.",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "vite",

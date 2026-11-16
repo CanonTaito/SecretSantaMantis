@@ -153,19 +153,10 @@ The live site runs on Cloudflare Workers: static files, plus a small Worker for 
 - Organisers whose list is saved on the old address stay there and see a "We've moved" notice, with a button to download a backup to upload on the new address. Browsers keep saved lists per address, so the new one can't see them.
 - Everyone else goes straight to the new address.
 
-## Put your own copy online (GitHub Pages)
-
-1. Fork or push this repo to your GitHub account.
-2. In the repo, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. Push to `main`. The workflow in `.github/workflows/deploy.yml` tests, builds and publishes the site.
-4. Your site appears at `https://<your-username>.github.io/<repo-name>/`.
-
-The build uses relative paths, so it works under any repo name. If you run your own copy, change the canonical and `og:url` links in `index.html` to your address.
-
 ## Built with
 
 React, TypeScript, Vite, Tailwind CSS, Vitest and [canvas-confetti](https://github.com/catdad/canvas-confetti).
 
 ## License
 
-[MIT](LICENSE)
+Copyright (c) 2026 CanonTaito. All rights reserved. This code is not open source; see [LICENSE](LICENSE).
