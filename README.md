@@ -99,7 +99,11 @@ npm run build   # production build into dist/
 
 ## Hosting
 
-The live site runs on Cloudflare Workers as static files (see [`wrangler.jsonc`](wrangler.jsonc)). Cloudflare builds and deploys it on every push to `main`, and serves it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com). The GitHub Pages workflow still publishes a second copy at [canontaito.github.io/SecretSantaMantis](https://canontaito.github.io/SecretSantaMantis/); the page's canonical link points search engines at the main address.
+The live site runs on Cloudflare Workers as static files (see [`wrangler.jsonc`](wrangler.jsonc)). Cloudflare builds and deploys it on every push to `main`, and serves it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com). The GitHub Pages workflow still publishes the old copy at [canontaito.github.io/SecretSantaMantis](https://canontaito.github.io/SecretSantaMantis/), which forwards visitors to the new address ([`src/lib/moved.ts`](src/lib/moved.ts)):
+
+- Reveal links go straight to the same link on the new address, so links sent from the old one keep working.
+- Organisers whose list is saved on the old address stay there and see a "We've moved" notice, with a button to download a backup to upload on the new address. Browsers keep saved lists per address, so the new one can't see them.
+- Everyone else goes straight to the new address.
 
 ## Put your own copy online (GitHub Pages)
 

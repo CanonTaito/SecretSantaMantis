@@ -10,10 +10,11 @@ import { useHash } from './hooks/useHash.ts'
 import { Snowfall } from './components/Snowfall.tsx'
 import { SantaFace } from './components/SantaFace.tsx'
 import { AdBanner } from './components/ads/AdBanner.tsx'
+import { MovedNotice } from './components/MovedNotice.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
-function Organizer() {
+function Organizer({ movedNotice }: { movedNotice: boolean }) {
   const [state, dispatch] = useSantaState()
   const [dialog, confirm] = useConfirm()
   const reachable: Step[] = state.draw ? ['setup', 'share'] : ['setup', 'draw']
@@ -37,6 +38,8 @@ function Organizer() {
         </p>
       </header>
 
+      {movedNotice && <MovedNotice state={state} />}
+
       <Stepper current={state.step} reachable={reachable} onSelect={(step) => dispatch({ type: 'goTo', step })} />
 
       {state.step === 'setup' && <SetupStep state={state} dispatch={dispatch} confirm={confirm} />}
@@ -50,14 +53,15 @@ function Organizer() {
   )
 }
 
-export default function App() {
+/** `movedNotice`: on the old address with a saved list, so show how to carry it to the new one. */
+export default function App({ movedNotice = false }: { movedNotice?: boolean }) {
   const hash = useHash()
   const reveal = revealFromHash(hash)
   // `undefined` = not a reveal link; `null` = a reveal link that couldn't be read.
   return (
     <>
       <Snowfall />
-      {reveal !== undefined ? <RevealPage key={hash} payload={reveal} /> : <Organizer />}
+      {reveal !== undefined ? <RevealPage key={hash} payload={reveal} /> : <Organizer movedNotice={movedNotice} />}
     </>
   )
 }
