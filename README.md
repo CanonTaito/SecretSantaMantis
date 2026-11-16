@@ -15,6 +15,8 @@ No accounts, no server, no email service. It all runs in your browser.
 
 As the organizer, you never see the matches unless you choose to.
 
+The site shows these steps and a short FAQ at the bottom of the home page (`…/#help` jumps straight there). To change the wording, edit [`src/content/faq.ts`](src/content/faq.ts).
+
 ## Importing a list from a spreadsheet
 
 Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** on the Set up screen. Use these columns (press **Download template** for an example file):

@@ -11,6 +11,7 @@ import { Snowfall } from './components/Snowfall.tsx'
 import { SantaFace } from './components/SantaFace.tsx'
 import { AdBanner } from './components/ads/AdBanner.tsx'
 import { MovedNotice } from './components/MovedNotice.tsx'
+import { Help } from './components/Help.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
@@ -28,6 +29,11 @@ function Organizer({ movedNotice }: { movedNotice: boolean }) {
     window.scrollTo({ top: 0 })
   }, [state.step])
 
+  // Opened at …/#help: the section didn't exist yet when the browser looked for it, so jump there now.
+  useEffect(() => {
+    if (window.location.hash === '#help') document.getElementById('help')?.scrollIntoView()
+  }, [])
+
   return (
     <div className="mx-auto max-w-4xl px-4 pt-8 pb-16 sm:pt-12">
       <header className="mb-8 text-center">
@@ -36,6 +42,12 @@ function Organizer({ movedNotice }: { movedNotice: boolean }) {
         <p className="mx-auto mt-2 max-w-md text-pine-800/75">
           Draw names, keep households apart, and send everyone their own secret link.
         </p>
+        <a
+          href="#help"
+          className="mt-2 inline-block text-sm font-semibold text-pine-600 underline-offset-4 hover:underline"
+        >
+          How does it work? ↓
+        </a>
       </header>
 
       {movedNotice && <MovedNotice state={state} />}
@@ -47,6 +59,8 @@ function Organizer({ movedNotice }: { movedNotice: boolean }) {
       {state.step === 'share' && <ShareStep state={state} dispatch={dispatch} confirm={confirm} />}
 
       <AdBanner className="mt-10" />
+
+      <Help className="mt-16" />
 
       {dialog}
     </div>
