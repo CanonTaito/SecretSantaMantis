@@ -4,6 +4,8 @@ A free, no-sign-up Secret Santa generator for families. People in the same house
 
 No accounts, no server, no email service. It all runs in your browser.
 
+**Use it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com)**
+
 ## How it works
 
 1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Tick **Child** for children (with their age, if you like): children only draw other children, and adults only draw adults. Optionally, add a gift hint for each person and extra rules like "Cruz can't draw Vegeta" (handy for not repeating last year's match).
@@ -46,7 +48,7 @@ There is no server, so the draw lives in three places:
 
 ## Privacy
 
-- Each match is stored inside its link, in the part after `#`. Browsers never send that part to a web server, so GitHub Pages never sees names or matches.
+- Each match is stored inside its link, in the part after `#`. Browsers never send that part to a web server, so the web host never sees names or matches.
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
@@ -64,7 +66,7 @@ The site has one sponsor banner, on the setup screens and on the reveal page (be
 **Advertise here.** When no ad is running for a visitor's region, they see an "Advertise here" banner with an enquiry form that emails you. To switch it on:
 
 1. Go to [web3forms.com](https://web3forms.com), enter the email address that should receive enquiries, and copy the access key they send you. Your email stays with Web3Forms; it never appears in this repo or on the site.
-2. For the live site: in the repo go to **Settings → Secrets and variables → Actions → Variables** and add `WEB3FORMS_KEY` with that key (or run `gh variable set WEB3FORMS_KEY`), then re-run the deploy.
+2. For the live site: in Cloudflare, open the `secretsantamantis` Worker, go to **Settings → Build → Variables and secrets**, add `VITE_WEB3FORMS_KEY` with that key, then redeploy. For the GitHub Pages copy, add it in the repo under **Settings → Secrets and variables → Actions → Variables** as `WEB3FORMS_KEY` (or run `gh variable set WEB3FORMS_KEY`).
 3. For local testing: copy `.env.example` to `.env` and paste the key after `VITE_WEB3FORMS_KEY=`. `.env` is git-ignored.
 
 Without a key, the "Advertise here" banner stays hidden.
@@ -74,7 +76,7 @@ Without a key, the "Advertise here" banner stays hidden.
 After someone unwraps their match, the reveal page suggests a few gift ideas that fit the budget and, for children, their age. Each opens a search on amazon.com.au.
 
 - The lists live in [`src/gifts/gifts.ts`](src/gifts/gifts.ts): adults, kids 0–3, 4–7, 8–12, and teens, each idea tagged with a price band (under $20, $20–50, $50–100, $100+). Ideas are never shown above the budget.
-- The links carry the site's Amazon Associates tracking ID, set as the `AMAZON_TAG` repository variable (or `VITE_AMAZON_TAG` in `.env` locally). Without it, the section is hidden.
+- The links carry the site's Amazon Associates tracking ID, set as `VITE_AMAZON_TAG` in the Cloudflare build variables (the `AMAZON_TAG` repository variable for the GitHub Pages copy, or `VITE_AMAZON_TAG` in `.env` locally). Without it, the section is hidden.
 - As an Amazon Associate we earn from qualifying purchases. Prices aren't shown (Amazon only allows prices from its own API), and gift-idea links are never put in the emails organisers send.
 
 ## Run it locally
@@ -95,6 +97,10 @@ npm test        # draw, link and backup tests
 npm run build   # production build into dist/
 ```
 
+## Hosting
+
+The live site runs on Cloudflare Workers as static files (see [`wrangler.jsonc`](wrangler.jsonc)). Cloudflare builds and deploys it on every push to `main`, and serves it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com). The GitHub Pages workflow still publishes a second copy at [canontaito.github.io/SecretSantaMantis](https://canontaito.github.io/SecretSantaMantis/); the page's canonical link points search engines at the main address.
+
 ## Put your own copy online (GitHub Pages)
 
 1. Fork or push this repo to your GitHub account.
@@ -102,7 +108,7 @@ npm run build   # production build into dist/
 3. Push to `main`. The workflow in `.github/workflows/deploy.yml` tests, builds and publishes the site.
 4. Your site appears at `https://<your-username>.github.io/<repo-name>/`.
 
-The build uses relative paths, so it works under any repo name.
+The build uses relative paths, so it works under any repo name. If you run your own copy, change the canonical and `og:url` links in `index.html` to your address.
 
 ## Built with
 
