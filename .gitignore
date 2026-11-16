@@ -13,3 +13,6 @@ coverage
 .env.*
 !.env.example
 .wrangler/
+
+# Local secrets for `wrangler dev`
+.dev.vars

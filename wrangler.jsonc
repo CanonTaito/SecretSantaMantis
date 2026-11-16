@@ -1,9 +1,16 @@
-// Cloudflare Workers config: serves the built site in ./dist as static files (no server code).
+// Cloudflare Workers config. The site in ./dist is served as static files; worker/index.ts
+// only runs for /api/* (the anonymous draw and unwrap counters).
 // Deployed by Cloudflare's Git integration on every push to main.
 {
   "name": "secretsantamantis",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-14",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // One small Durable Object holds the daily counts in its built-in SQLite storage.
+  "durable_objects": {
+    "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Counter"] }]
 }

@@ -3,6 +3,7 @@ import type { SantaState } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
 import { buildDrawInput, explainImpossible, generateDraw, validateSetup } from '../../lib/draw.ts'
 import { formatDate, householdNames, personNames } from '../../lib/labels.ts'
+import { countEvent } from '../../lib/count.ts'
 
 interface Props {
   state: SantaState
@@ -32,8 +33,10 @@ export function DrawStep({ state, dispatch }: Props) {
     const input = buildDrawInput(state.households, state.exclusions)
     const pairs = generateDraw(input)
     setShuffling(false)
-    if (pairs) dispatch({ type: 'setDraw', pairs })
-    else setImpossible(explainImpossible(input, names, householdNames(state.households)))
+    if (pairs) {
+      dispatch({ type: 'setDraw', pairs })
+      countEvent({ e: 'draw', n: input.people.length })
+    } else setImpossible(explainImpossible(input, names, householdNames(state.households)))
   }
 
   const draw = () => {

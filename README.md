@@ -2,7 +2,7 @@
 
 A free, no-sign-up Secret Santa generator for families. People in the same household never draw each other, and everyone gets their own private link to unwrap their match.
 
-No accounts, no server, no email service. It all runs in your browser.
+No accounts, no database of names, no email service. Your list and the draw stay in your browser.
 
 **Use it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com)**
 
@@ -36,7 +36,7 @@ Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** o
 
 ## Where the matches are kept
 
-There is no server, so the draw lives in three places:
+Nothing about your group is stored on a server, so the draw lives in three places:
 
 | Where | What's there | Who can see it |
 | --- | --- | --- |
@@ -54,9 +54,25 @@ There is no server, so the draw lives in three places:
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
 - The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits. It uses no cookies and doesn't track individual visitors. It never sees the part of a link after `#`, so names and matches aren't included.
+- The live site keeps two anonymous totals: draws made (with the number of people in each) and gifts unwrapped. Only those numbers are sent; see [Usage counts](#usage-counts).
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
 - Gift-idea links go to amazon.com.au with the site's Associates tag; nothing about the match or the people is included in them.
 - The **Advertise here** and **Send feedback** forms are the only things that send what people type off the page: when someone presses Send, what they entered goes to [Web3Forms](https://web3forms.com), which emails it to the site owner.
+
+## Usage counts
+
+To see whether people actually use the site, it counts two things, as plain numbers per day:
+
+- **Draws:** when a draw succeeds, the page sends `{"e":"draw","n":8}` (8 being the number of people). A redraw counts again.
+- **Unwraps:** when someone opens their present, the page sends `{"e":"unwrap"}`, once per link per device.
+
+No names, links, matches, hints or email addresses are sent, and the server drops any field it doesn't expect ([`src/lib/countEvents.ts`](src/lib/countEvents.ts)). Counts are only sent from `secretsanta.taitoapps.com`, so local testing and other copies don't add to them ([`src/lib/count.ts`](src/lib/count.ts)).
+
+The counting runs in a small Cloudflare Worker ([`worker/index.ts`](worker/index.ts)) that stores one row per day (Brisbane time) in a Durable Object. Anyone could send fake counts to it, so treat the numbers as a good estimate, not an audit.
+
+**Seeing the numbers.** Open `https://secretsanta.taitoapps.com/api/stats`. It asks for a username and password: the username can be anything, and the password is the `STATS_KEY` secret. To set it, open the `secretsantamantis` Worker in Cloudflare, go to **Settings → Variables and Secrets**, and add `STATS_KEY` with the type **Secret** (a plain-text variable would be wiped by the next deploy). Until it's set, the stats page is switched off.
+
+**Testing locally.** `npm run build`, then `npx wrangler dev` serves the site and the Worker at http://localhost:8787. Put `STATS_KEY=anything` in a `.dev.vars` file (git-ignored) to open the stats page there.
 
 ## Facebook and other in-app browsers
 
@@ -114,7 +130,7 @@ npm run build   # production build into dist/
 
 ## Hosting
 
-The live site runs on Cloudflare Workers as static files (see [`wrangler.jsonc`](wrangler.jsonc)). Cloudflare builds and deploys it on every push to `main`, and serves it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com). The GitHub Pages workflow still publishes the old copy at [canontaito.github.io/SecretSantaMantis](https://canontaito.github.io/SecretSantaMantis/), which forwards visitors to the new address ([`src/lib/moved.ts`](src/lib/moved.ts)):
+The live site runs on Cloudflare Workers: static files, plus a small Worker for the [usage counts](#usage-counts) (see [`wrangler.jsonc`](wrangler.jsonc)). Cloudflare builds and deploys it on every push to `main`, and serves it at [secretsanta.taitoapps.com](https://secretsanta.taitoapps.com). The GitHub Pages workflow still publishes the old copy at [canontaito.github.io/SecretSantaMantis](https://canontaito.github.io/SecretSantaMantis/), which forwards visitors to the new address ([`src/lib/moved.ts`](src/lib/moved.ts)):
 
 - Reveal links go straight to the same link on the new address, so links sent from the old one keep working.
 - Organisers whose list is saved on the old address stay there and see a "We've moved" notice, with a button to download a backup to upload on the new address. Browsers keep saved lists per address, so the new one can't see them.

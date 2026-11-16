@@ -5,6 +5,7 @@ import { formatDate } from '../../lib/labels.ts'
 import { GiftBox, type GiftPhase } from './GiftBox.tsx'
 import { AdBanner } from '../ads/AdBanner.tsx'
 import { GiftIdeas } from './GiftIdeas.tsx'
+import { countUnwrapOnce } from '../../lib/count.ts'
 
 const COLORS = ['#c8323b', '#2f7a55', '#e3b341', '#fffdf8']
 
@@ -36,7 +37,9 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
   }, [payload])
 
   useEffect(() => {
-    if (phase === 'open') heading.current?.focus()
+    if (phase !== 'open') return
+    heading.current?.focus()
+    countUnwrapOnce(window.location.hash)
   }, [phase])
 
   if (!payload) {

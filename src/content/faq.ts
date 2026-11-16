@@ -76,7 +76,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: 'What does the site know about me?',
-    a: 'Very little. Your list never leaves your browser. The site counts visits with Cloudflare Web Analytics, which uses no cookies and doesn’t track individual visitors. The feedback and advertising forms only send what you type into them.',
+    a: 'Very little. Your list, the names and the matches never leave your browser. The site keeps anonymous totals: visits (with Cloudflare Web Analytics, no cookies), how many draws are made and how many people were in each, and how many gifts are unwrapped. These are plain numbers that can’t be tied to you. The feedback and advertising forms only send what you type into them.',
   },
   {
     q: 'Why are there ads and Amazon links?',
