@@ -70,7 +70,24 @@ No names, links, matches, hints or email addresses are sent, and the server drop
 
 The counting runs in a small Cloudflare Worker ([`worker/index.ts`](worker/index.ts)) that stores one row per day (Brisbane time) in a Durable Object. Anyone could send fake counts to it, so treat the numbers as a good estimate, not an audit.
 
-**Seeing the numbers.** Open `https://secretsanta.taitoapps.com/api/stats`. It asks for a username and password: the username can be anything, and the password is the `STATS_KEY` secret. To set it, open the `secretsantamantis` Worker in Cloudflare, go to **Settings → Variables and Secrets**, and add `STATS_KEY` with the type **Secret** (a plain-text variable would be wiped by the next deploy). Until it's set, the stats page is switched off.
+**Seeing the numbers.** Open `https://secretsanta.taitoapps.com/api/stats`. It asks for a username and password: the username can be anything, and the password is the `STATS_KEY` secret. To set it, open the `secretsantamantis` Worker in Cloudflare, go to **Settings → Runtime variables and secrets** (not the Build section's variables, which the running Worker can't see), and add `STATS_KEY` with the type **Secret**, then deploy. A plain-text variable would be wiped by the next deploy; a secret is kept. Until it's set, the stats page says "Not found". Or set it from a terminal with `npx wrangler secret put STATS_KEY`.
+
+**Reading the stats.** One row per day (Brisbane time), newest first, with an **All time** row on top:
+
+| Column | What it counts |
+| --- | --- |
+| **Draws** | Draws that finished. A redraw counts again, so this can be a little higher than the number of groups. |
+| **People** | Everyone in those draws, added up. |
+| **Avg group** | People ÷ draws: a typical group's size. A good number to quote to advertisers. |
+| **Unwraps** | Presents opened. Each link counts once per device, so re-opening it to check the name doesn't add more. |
+
+What to look for:
+
+- **Unwraps compared with people** shows whether links get used. If unwraps reach roughly 70–90% of people, groups are sending and opening their links. Far lower means organisers may be drawing but not sending links, or people haven't opened them yet. Someone opening their link on both a phone and a laptop counts twice, so unwraps can occasionally go above people.
+- **Draws compared with visits** (visits come from Cloudflare Web Analytics) shows how many visitors actually run a draw. For example, 400 visits and 20 draws means about 1 in 20 visitors organised a group.
+- **Unwraps trail draws by a few days.** Organisers often draw names early and send links later, so a day with many draws is usually followed by days of unwraps.
+- **Expect a seasonal shape:** quiet most of the year, rising from late October, peaking in late November and early December, and fading after Christmas.
+- **The first unwrap on 2026-11-16 was a test** from setting this up.
 
 **Testing locally.** `npm run build`, then `npx wrangler dev` serves the site and the Worker at http://localhost:8787. Put `STATS_KEY=anything` in a `.dev.vars` file (git-ignored) to open the stats page there.
 
