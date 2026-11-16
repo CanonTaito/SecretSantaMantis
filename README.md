@@ -53,6 +53,7 @@ There is no server, so the draw lives in three places:
 - Each match is stored inside its link, in the part after `#`. Browsers never send that part to a web server, so the web host never sees names or matches.
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
+- The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits. It uses no cookies and doesn't track individual visitors. It never sees the part of a link after `#`, so names and matches aren't included.
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
 - Gift-idea links go to amazon.com.au with the site's Associates tag; nothing about the match or the people is included in them.
 - The **Advertise here** form is the only thing that sends data off the page: when someone presses Send, their name, email, phone and message go to [Web3Forms](https://web3forms.com), which emails them to the site owner.
