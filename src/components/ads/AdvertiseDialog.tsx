@@ -5,8 +5,30 @@ const ENDPOINT = 'https://api.web3forms.com/submit'
 
 type Status = { kind: 'idle' } | { kind: 'sending' } | { kind: 'sent' } | { kind: 'error'; message: string }
 
-/** "Advertise here" enquiry form. Sends through Web3Forms, which forwards it to the site owner's email. */
-export function AdvertiseDialog({ onClose }: { onClose: () => void }) {
+export type FormKind = 'advertise' | 'feedback'
+
+const COPY: Record<FormKind, { title: string; intro: string; subject: string; placeholder: string }> = {
+  advertise: {
+    title: '📣 Advertise here',
+    intro: "Put your business in front of families organising their Secret Santa. Leave your details and we'll get back to you.",
+    subject: 'advertising enquiry',
+    placeholder: "Your business, where you're based, and when you'd like to advertise.",
+  },
+  feedback: {
+    title: '💬 Send feedback',
+    intro: "Found a problem, or have an idea? We read every message. Add your email if you'd like a reply.",
+    subject: 'feedback',
+    placeholder: 'What happened, or what would make the site better?',
+  },
+}
+
+/**
+ * The site's contact form: advertising enquiries or general feedback.
+ * Sends through Web3Forms, which forwards it to the site owner's email.
+ */
+export function AdvertiseDialog({ onClose, kind = 'advertise' }: { onClose: () => void; kind?: FormKind }) {
+  const copy = COPY[kind]
+  const isAd = kind === 'advertise'
   const ref = useRef<HTMLDialogElement>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
 
@@ -30,11 +52,11 @@ export function AdvertiseDialog({ onClose }: { onClose: () => void }) {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           access_key: ENQUIRY_KEY,
-          subject: `Secret Santa Mantis: advertising enquiry from ${data.name}`,
+          subject: `Secret Santa Mantis: ${copy.subject} from ${data.name || 'a visitor'}`,
           from_name: 'Secret Santa Mantis',
           name: data.name,
           email: data.email,
-          phone: data.phone,
+          ...(isAd ? { phone: data.phone } : { page: window.location.origin + window.location.pathname }),
           message: data.message,
         }),
       })
@@ -60,13 +82,13 @@ export function AdvertiseDialog({ onClose }: { onClose: () => void }) {
     >
       <div className="p-6">
         <h2 id="advertise-title" className="text-xl font-bold">
-          📣 Advertise here
+          {copy.title}
         </h2>
 
         {status.kind === 'sent' ? (
           <>
             <p className="mt-3 text-sm leading-relaxed text-pine-800/80" role="status">
-              Thanks! Your message has been sent and we'll be in touch soon.
+              {isAd ? "Thanks! Your message has been sent and we'll be in touch soon." : 'Thanks! Your message has been sent.'}
             </p>
             <div className="mt-6 flex justify-end">
               <button type="button" className="btn-green" onClick={onClose} autoFocus>
@@ -76,38 +98,37 @@ export function AdvertiseDialog({ onClose }: { onClose: () => void }) {
           </>
         ) : (
           <form onSubmit={submit} className="mt-2">
-            <p className="text-sm leading-relaxed text-pine-800/80">
-              Put your business in front of families organising their Secret Santa. Leave your details and we'll get
-              back to you.
-            </p>
+            <p className="text-sm leading-relaxed text-pine-800/80">{copy.intro}</p>
             <div className="mt-4 grid gap-3">
               <div>
                 <label className="label" htmlFor="ad-name">
-                  Name
+                  {isAd ? 'Name' : 'Name (optional)'}
                 </label>
-                <input id="ad-name" name="name" className="input" required maxLength={100} autoComplete="name" />
+                <input id="ad-name" name="name" className="input" required={isAd} maxLength={100} autoComplete="name" />
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className={isAd ? 'grid gap-3 sm:grid-cols-2' : 'grid gap-3'}>
                 <div>
                   <label className="label" htmlFor="ad-email">
-                    Email
+                    {isAd ? 'Email' : 'Email (optional)'}
                   </label>
                   <input
                     id="ad-email"
                     name="email"
                     type="email"
                     className="input"
-                    required
+                    required={isAd}
                     maxLength={150}
                     autoComplete="email"
                   />
                 </div>
-                <div>
-                  <label className="label" htmlFor="ad-phone">
-                    Phone (optional)
-                  </label>
-                  <input id="ad-phone" name="phone" type="tel" className="input" maxLength={40} autoComplete="tel" />
-                </div>
+                {isAd && (
+                  <div>
+                    <label className="label" htmlFor="ad-phone">
+                      Phone (optional)
+                    </label>
+                    <input id="ad-phone" name="phone" type="tel" className="input" maxLength={40} autoComplete="tel" />
+                  </div>
+                )}
               </div>
               <div>
                 <label className="label" htmlFor="ad-message">
@@ -119,7 +140,7 @@ export function AdvertiseDialog({ onClose }: { onClose: () => void }) {
                   className="input min-h-28"
                   required
                   maxLength={2000}
-                  placeholder="Your business, where you're based, and when you'd like to advertise."
+                  placeholder={copy.placeholder}
                 />
               </div>
               <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} tabIndex={-1} />

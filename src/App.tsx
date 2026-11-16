@@ -12,6 +12,8 @@ import { SantaFace } from './components/SantaFace.tsx'
 import { AdBanner } from './components/ads/AdBanner.tsx'
 import { MovedNotice } from './components/MovedNotice.tsx'
 import { Help } from './components/Help.tsx'
+import { InAppNotice } from './components/InAppNotice.tsx'
+import { Footer } from './components/Footer.tsx'
 import { revealFromHash } from './lib/revealLink.ts'
 import type { Step } from './types.ts'
 
@@ -51,6 +53,7 @@ function Organizer({ movedNotice }: { movedNotice: boolean }) {
       </header>
 
       {movedNotice && <MovedNotice state={state} />}
+      <InAppNotice />
 
       <Stepper current={state.step} reachable={reachable} onSelect={(step) => dispatch({ type: 'goTo', step })} />
 
@@ -61,6 +64,8 @@ function Organizer({ movedNotice }: { movedNotice: boolean }) {
       <AdBanner className="mt-10" />
 
       <Help className="mt-16" />
+
+      <Footer className="mt-12" />
 
       {dialog}
     </div>

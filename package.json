@@ -10,7 +10,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "og-image": "node scripts/make-og-image.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
@@ -18,6 +19,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.5",
     "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^19.3.0",

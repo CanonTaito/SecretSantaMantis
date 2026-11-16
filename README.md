@@ -56,7 +56,19 @@ There is no server, so the draw lives in three places:
 - The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits. It uses no cookies and doesn't track individual visitors. It never sees the part of a link after `#`, so names and matches aren't included.
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
 - Gift-idea links go to amazon.com.au with the site's Associates tag; nothing about the match or the people is included in them.
-- The **Advertise here** form is the only thing that sends data off the page: when someone presses Send, their name, email, phone and message go to [Web3Forms](https://web3forms.com), which emails them to the site owner.
+- The **Advertise here** and **Send feedback** forms are the only things that send what people type off the page: when someone presses Send, what they entered goes to [Web3Forms](https://web3forms.com), which emails it to the site owner.
+
+## Facebook and other in-app browsers
+
+Links tapped inside the Facebook, Messenger or Instagram apps open in that app's built-in browser, which can lose saved lists and often can't download backups. On the organiser pages, the site spots these browsers and asks people to open it in Safari or Chrome instead ([`src/lib/inAppBrowser.ts`](src/lib/inAppBrowser.ts)). Reveal pages work fine there, so they don't show the notice. To preview it, add `?inapp=facebook` to the address.
+
+## Feedback
+
+The footer's **Send feedback** link opens the same Web3Forms form as Advertise here, in feedback mode (name and email optional). It uses the same `WEB3FORMS_KEY`; without a key it's hidden.
+
+## Link preview picture
+
+When the site's address is shared on Facebook, Messenger or WhatsApp, the preview shows `public/og-image.png`. To change it, edit [`scripts/og-image.svg`](scripts/og-image.svg) and run `npm run og-image`. That rebuilds the preview picture and `public/apple-touch-icon.png` (the home-screen icon), using fonts installed on your computer. Commit both PNGs. Facebook keeps old previews for a while, so after a change, paste the address into Facebook's [Sharing Debugger](https://developers.facebook.com/tools/debug/) and press **Scrape Again**.
 
 ## Ads
 

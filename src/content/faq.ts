@@ -75,6 +75,10 @@ export const FAQ: FaqItem[] = [
     a: 'Each link holds only that person’s own match, scrambled so it isn’t readable at a glance. It isn’t encryption, so treat each link like a sealed envelope and only send it to the person it’s for.',
   },
   {
+    q: 'What does the site know about me?',
+    a: 'Very little. Your list never leaves your browser. The site counts visits with Cloudflare Web Analytics, which uses no cookies and doesn’t track individual visitors. The feedback and advertising forms only send what you type into them.',
+  },
+  {
     q: 'Why are there ads and Amazon links?',
     a: 'They keep the site free. The gift ideas link to Amazon, and as an Amazon Associate we earn from qualifying purchases, at no extra cost to you. Nothing about your group or the matches is included in those links.',
   },
