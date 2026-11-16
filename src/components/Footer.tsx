@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { AdvertiseDialog, ENQUIRY_KEY } from './ads/AdvertiseDialog.tsx'
 
-const SOURCE_URL = 'https://github.com/CanonTaito/SecretSantaMantis'
-
 /** Small links at the very bottom of the organiser pages. */
 export function Footer({ className = '' }: { className?: string }) {
   const [feedback, setFeedback] = useState(false)
@@ -22,10 +20,6 @@ export function Footer({ className = '' }: { className?: string }) {
             </button>
           </>
         )}
-        <span aria-hidden>·</span>
-        <a className={link} href={SOURCE_URL} target="_blank" rel="noopener">
-          Source on GitHub ↗
-        </a>
       </nav>
       {feedback && <AdvertiseDialog kind="feedback" onClose={() => setFeedback(false)} />}
     </footer>
