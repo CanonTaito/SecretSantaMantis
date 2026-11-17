@@ -12,6 +12,15 @@ export function Footer({ className = '' }: { className?: string }) {
         <a className={link} href="#help">
           How it works
         </a>
+        {/* Search pages made at build time (src/seo/pages.tsx); they don't exist under `npm run dev`. */}
+        <span aria-hidden>·</span>
+        <a className={link} href="family-secret-santa/">
+          Family Secret Santa
+        </a>
+        <span aria-hidden>·</span>
+        <a className={link} href="kris-kringle-generator/">
+          Kris Kringle
+        </a>
         {ENQUIRY_KEY && (
           <>
             <span aria-hidden>·</span>

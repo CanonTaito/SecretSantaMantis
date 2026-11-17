@@ -5,7 +5,7 @@ import type { SantaState } from '../types.ts'
 export const NEW_HOME = 'https://secretsanta.taitoapps.com/'
 
 /** Old addresses that should move people to NEW_HOME. */
-const OLD_HOSTS = ['canontaito.github.io']
+export const OLD_HOSTS = ['canontaito.github.io']
 
 export function isOldHost(hostname: string): boolean {
   return OLD_HOSTS.includes(hostname.toLowerCase())

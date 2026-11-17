@@ -108,7 +108,8 @@ When the site's address is shared on Facebook, Messenger or WhatsApp, the previe
 ## Search engines
 
 - [`public/robots.txt`](public/robots.txt) lets search engines crawl the site, keeps them out of `/api/`, and points them to the sitemap. Cloudflare's managed robots.txt adds its own comments above these rules.
-- [`public/sitemap.xml`](public/sitemap.xml) lists the one page there is, the home page.
+- [`public/sitemap.xml`](public/sitemap.xml) lists the home page and the search pages.
+- **Search pages:** [`/kris-kringle-generator/`](https://secretsanta.taitoapps.com/kris-kringle-generator/) and [`/family-secret-santa/`](https://secretsanta.taitoapps.com/family-secret-santa/) are written for the searches people make, and are linked from the home page's footer. Their text lives in [`src/seo/pages.tsx`](src/seo/pages.tsx). `npm run build` turns them into plain HTML with no JavaScript ([`scripts/prerender-seo.mjs`](scripts/prerender-seo.mjs)), so they don't exist under `npm run dev`; use `npm run build` then `npx vite preview` to see them. To add one, add a record to `SEO_PAGES` and its address to the sitemap.
 - Reveal links can't show up in search results. Search engines ignore everything after `#`, so names, matches and hints never reach them.
 
 The site is in [Google Search Console](https://search.google.com/search-console) as the domain property `taitoapps.com`. It was verified with a TXT record in Cloudflare DNS, so leave that record in place. The sitemap is submitted there. [Bing Webmaster Tools](https://www.bing.com/webmasters) has the same site, imported from Search Console, with the sitemap submitted there too; Bing's results also feed DuckDuckGo and Ecosia.
