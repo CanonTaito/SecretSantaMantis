@@ -111,7 +111,7 @@ When the site's address is shared on Facebook, Messenger or WhatsApp, the previe
 - [`public/sitemap.xml`](public/sitemap.xml) lists the one page there is, the home page.
 - Reveal links can't show up in search results. Search engines ignore everything after `#`, so names, matches and hints never reach them.
 
-The site is in [Google Search Console](https://search.google.com/search-console) as the domain property `taitoapps.com`. It was verified with a TXT record in Cloudflare DNS, so leave that record in place. The sitemap is submitted there, and Bing Webmaster Tools imports it from Google.
+The site is in [Google Search Console](https://search.google.com/search-console) as the domain property `taitoapps.com`. It was verified with a TXT record in Cloudflare DNS, so leave that record in place. The sitemap is submitted there. [Bing Webmaster Tools](https://www.bing.com/webmasters) has the same site, imported from Search Console, with the sitemap submitted there too; Bing's results also feed DuckDuckGo and Ecosia.
 
 **Reading the Performance report.** Open **Performance → Search results** in Search Console:
 
