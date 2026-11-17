@@ -6,6 +6,7 @@ import { GiftBox, type GiftPhase } from './GiftBox.tsx'
 import { AdBanner } from '../ads/AdBanner.tsx'
 import { GiftIdeas } from './GiftIdeas.tsx'
 import { countUnwrapOnce } from '../../lib/count.ts'
+import { InviteCard } from './InviteCard.tsx'
 
 const COLORS = ['#c8323b', '#2f7a55', '#e3b341', '#fffdf8']
 
@@ -137,13 +138,20 @@ export function RevealPage({ payload }: { payload: RevealPayload | null }) {
         </div>
       )}
 
-      {phase === 'open' && <GiftIdeas receiver={payload.r} budget={payload.b} hint={payload.w} isChild={payload.k === '1'} age={payload.a} />}
+      {phase === 'open' && (
+        <>
+          <GiftIdeas receiver={payload.r} budget={payload.b} hint={payload.w} isChild={payload.k === '1'} age={payload.a} />
+          <InviteCard homeHref={homeHref()} />
+        </>
+      )}
 
       <AdBanner className="mt-12 w-full" />
 
-      <a className="mt-auto pt-10 text-sm text-pine-700/60 underline-offset-4 hover:underline" href={homeHref()}>
-        Organizing your own? Start a Secret Santa
-      </a>
+      {phase !== 'open' && (
+        <a className="mt-auto pt-10 text-sm text-pine-700/60 underline-offset-4 hover:underline" href={homeHref()}>
+          Organizing your own? Start a Secret Santa
+        </a>
+      )}
     </main>
   )
 }

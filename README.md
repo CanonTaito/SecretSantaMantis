@@ -15,6 +15,8 @@ No accounts, no database of names, no email service. Your list and the draw stay
 
 As the organizer, you never see the matches unless you choose to.
 
+After unwrapping, the reveal page invites people to start their own Secret Santa or pass the site on, and once an organiser has sent every link, the Share step suggests sharing the site with another group.
+
 The site shows these steps and a short FAQ at the bottom of the home page (`…/#help` jumps straight there). To change the wording, edit [`src/content/faq.ts`](src/content/faq.ts).
 
 ## Importing a list from a spreadsheet

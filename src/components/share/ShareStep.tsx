@@ -7,6 +7,7 @@ import { householdLabel } from '../../lib/labels.ts'
 import { ShareRow } from './ShareRow.tsx'
 import { BackupControls } from './BackupControls.tsx'
 import { MasterList } from './MasterList.tsx'
+import { ShareSiteButton } from '../ShareSiteButton.tsx'
 
 interface Props {
   state: SantaState
@@ -119,6 +120,21 @@ export function ShareStep({ state, dispatch, confirm }: Props) {
       </section>
 
       <MasterList state={state} dispatch={dispatch} confirm={confirm} />
+
+      {people.length > 0 && sentCount === people.length && (
+        <section
+          aria-labelledby="pass-on-heading"
+          className="card flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div>
+            <h2 id="pass-on-heading" className="text-lg font-bold">
+              🎉 All links sent!
+            </h2>
+            <p className="text-sm text-pine-800/75">Know another group doing Secret Santa? Pass the site on.</p>
+          </div>
+          <ShareSiteButton label="📤 Share the site" className="btn-green self-start sm:self-center" />
+        </section>
+      )}
 
       <div className="flex flex-wrap justify-between gap-2">
         <button type="button" className="btn-secondary" onClick={redraw}>
