@@ -105,6 +105,30 @@ The footer's **Send feedback** link opens the same Web3Forms form as Advertise h
 
 When the site's address is shared on Facebook, Messenger or WhatsApp, the preview shows `public/og-image.png`. To change it, edit [`scripts/og-image.svg`](scripts/og-image.svg) and run `npm run og-image`. That rebuilds the preview picture and `public/apple-touch-icon.png` (the home-screen icon), using fonts installed on your computer. Commit both PNGs. Facebook keeps old previews for a while, so after a change, paste the address into Facebook's [Sharing Debugger](https://developers.facebook.com/tools/debug/) and press **Scrape Again**.
 
+## Search engines
+
+- [`public/robots.txt`](public/robots.txt) lets search engines crawl the site, keeps them out of `/api/`, and points them to the sitemap. Cloudflare's managed robots.txt adds its own comments above these rules.
+- [`public/sitemap.xml`](public/sitemap.xml) lists the one page there is, the home page.
+- Reveal links can't show up in search results. Search engines ignore everything after `#`, so names, matches and hints never reach them.
+
+The site is in [Google Search Console](https://search.google.com/search-console) as the domain property `taitoapps.com`. It was verified with a TXT record in Cloudflare DNS, so leave that record in place. The sitemap is submitted there, and Bing Webmaster Tools imports it from Google.
+
+**Reading the Performance report.** Open **Performance → Search results** in Search Console:
+
+| Column | What it means |
+| --- | --- |
+| **Queries** | What people typed into Google when the site showed up. |
+| **Impressions** | How many times the site appeared in someone's results, even if they didn't scroll to it. |
+| **Clicks** | How many of those people visited. |
+| **Position** | The site's average place in the results: 1 is the top, and 11 or more is page two. |
+
+What to look for:
+
+- **The first few weeks:** expect mostly searches for the site's own name. Generic searches like "secret santa generator" come later, as other sites link here.
+- **A query with many impressions but few clicks** means people see the site but pick something else. Check whether the title and description in `index.html` answer what they searched for.
+- **Expect a seasonal shape**, like the usage counts: busiest in late November and early December.
+- **Pages → Why pages aren't indexed** lists crawling problems. "Alternate page with proper canonical tag" for the old GitHub Pages address is expected and fine.
+
 ## Ads
 
 The site has one sponsor banner, on the setup screens and on the reveal page (below the present, never covering it).
