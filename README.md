@@ -113,6 +113,8 @@ When the site's address is shared on Facebook, Messenger or WhatsApp, the previe
 
 The site is in [Google Search Console](https://search.google.com/search-console) as the domain property `taitoapps.com`. It was verified with a TXT record in Cloudflare DNS, so leave that record in place. The sitemap is submitted there. [Bing Webmaster Tools](https://www.bing.com/webmasters) has the same site, imported from Search Console, with the sitemap submitted there too; Bing's results also feed DuckDuckGo and Ecosia.
 
+**Directory listings.** [`marketing/alternativeto/`](marketing/alternativeto/) has the AlternativeTo listing: the form text ([`listing.md`](marketing/alternativeto/listing.md)), the icon and four screenshots of a made-up family. `npm run og-image` makes the icon; reuse these files for other directories.
+
 **Reading the Performance report.** Open **Performance → Search results** in Search Console:
 
 | Column | What it means |
