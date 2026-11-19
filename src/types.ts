@@ -45,6 +45,11 @@ export interface SantaState {
   step: Step
   event: EventDetails
   households: Household[]
+  /**
+   * False: a plain list of names, where each person is quietly a household of one.
+   * True: people are grouped into households that never draw each other.
+   */
+  useHouseholds: boolean
   exclusions: Exclusion[]
   draw: Draw | null
 }

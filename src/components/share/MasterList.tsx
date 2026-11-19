@@ -2,7 +2,7 @@ import { useState, type Dispatch } from 'react'
 import type { SantaState } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
 import type { ConfirmOptions } from '../ConfirmDialog.tsx'
-import { childLabel, householdLabel } from '../../lib/labels.ts'
+import { childLabel, householdTag } from '../../lib/labels.ts'
 import { allowedReceivers, buildDrawInput, planReassign } from '../../lib/draw.ts'
 
 interface Props {
@@ -18,7 +18,9 @@ export function MasterList({ state, dispatch, confirm }: Props) {
   const draw = state.draw
   if (!draw) return null
 
-  const people = state.households.flatMap((h, i) => h.people.map((p) => ({ ...p, household: householdLabel(h, i) })))
+  const people = state.households.flatMap((h, i) =>
+    h.people.map((p) => ({ ...p, household: householdTag(h, i, state.useHouseholds) })),
+  )
   const byId = new Map(people.map((p) => [p.id, p]))
   const name = (id: string) => byId.get(id)?.name.trim() ?? 'Someone'
   const allowed = allowedReceivers(buildDrawInput(state.households, state.exclusions))
@@ -89,7 +91,8 @@ export function MasterList({ state, dispatch, confirm }: Props) {
         <>
           <p className="mt-4 text-sm text-pine-800/75">
             To swap, pick someone new under <strong>Buys for</strong>. Whoever had that person takes the old match, so
-            everyone still gets one gift. Choices that break a household, rule or the kids-draw-kids rule are greyed out.
+            everyone still gets one gift. Choices that break a household, rule or the kids-draw-kids rule are greyed
+            out.
           </p>
 
           {notice && (
@@ -116,8 +119,7 @@ export function MasterList({ state, dispatch, confirm }: Props) {
                       <td className="py-2 pr-3">
                         <span className="font-semibold">{giver.name}</span>
                         <span className="block text-xs text-pine-800/55">
-                          {giver.household}
-                          {giver.isChild && ` · ${childLabel(giver)}`}
+                          {[giver.household, childLabel(giver)].filter(Boolean).join(' · ')}
                         </span>
                       </td>
                       <td className="py-2 pr-3 text-berry-500" aria-hidden>
@@ -138,7 +140,9 @@ export function MasterList({ state, dispatch, confirm }: Props) {
                               const blocked = !isCurrent && !plan?.ok
                               return (
                                 <option key={p.id} value={p.id} disabled={blocked}>
-                                  {p.name.trim()} ({p.household}){p.isChild ? ' 🧒🏾' : ''}
+                                  {p.name.trim()}
+                                  {p.household ? ` (${p.household})` : ''}
+                                  {p.isChild ? ' 🧒🏾' : ''}
                                   {blocked ? ' — breaks a rule' : ''}
                                 </option>
                               )

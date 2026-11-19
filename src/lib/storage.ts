@@ -21,10 +21,17 @@ export function createInitialState(): SantaState {
     version: 1,
     step: 'setup',
     event: { name: '', budget: '', date: '' },
-    households: [newHousehold(), newHousehold()],
+    // Three empty rows: the fewest people a draw needs.
+    households: [newHousehold(), newHousehold(), newHousehold()],
+    useHouseholds: false,
     exclusions: [],
     draw: null,
   }
+}
+
+/** True when the list really uses households: one is named, or holds more than one person. */
+export function looksGrouped(households: Household[]): boolean {
+  return households.some((h) => h.name.trim() !== '' || h.people.length > 1)
 }
 
 // ---------- validation ----------
@@ -111,6 +118,8 @@ export function parseState(v: unknown): SantaState | null {
     step: draw ? 'share' : step === 'share' ? 'setup' : step,
     event,
     households: hh,
+    // Lists saved before the simple list existed open the way they always looked.
+    useHouseholds: typeof v.useHouseholds === 'boolean' ? v.useHouseholds || looksGrouped(hh) : looksGrouped(hh),
     exclusions: (exclusions as Exclusion[]).filter((e) => personIds.has(e.giverId) && personIds.has(e.receiverId)),
     draw,
   }

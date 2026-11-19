@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import type { Household } from '../types.ts'
-import { CSV_TEMPLATE, importPeopleCsv, mergeImport, parseCsv } from './csvImport.ts'
+import { CSV_TEMPLATE, CSV_TEMPLATE_SIMPLE, importPeopleCsv, mergeImport, parseCsv } from './csvImport.ts'
 
 describe('parseCsv', () => {
   test('handles quotes, escaped quotes, commas and newlines in cells', () => {
@@ -78,6 +78,40 @@ describe('importPeopleCsv', () => {
       name: 'The Ottos',
       people: [{ name: 'Vegeta', email: 'vegeta@x.test', wishlist: 'Tea', isChild: false, age: '' }],
     })
+  })
+
+  test('reads the simple list template: everyone on their own, no households', () => {
+    const result = importPeopleCsv(CSV_TEMPLATE_SIMPLE, { withHouseholds: false })
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.warnings).toEqual([])
+    expect(result.households.map((h) => [h.name, h.people.map((p) => p.name)])).toEqual([
+      ['', ['Cruz']],
+      ['', ['Rey']],
+      ['', ['Vegeta']],
+      ['', ['Grandma Lina']],
+    ])
+    expect(result.households[1]!.people[0]).toMatchObject({ isChild: true, age: '8' })
+  })
+
+  test('on the simple list, a file without a header starts with Name', () => {
+    const result = importPeopleCsv('Vegeta,vegeta@x.test,Tea', { withHouseholds: false })
+    expect(result.ok && result.households[0]).toEqual({
+      name: '',
+      people: [{ name: 'Vegeta', email: 'vegeta@x.test', wishlist: 'Tea', isChild: false, age: '' }],
+    })
+  })
+
+  test('on the simple list, a Household column in the header is still kept', () => {
+    const result = importPeopleCsv(CSV_TEMPLATE, { withHouseholds: false })
+    expect(result.ok && result.households[0]!.name).toBe('The Taitos')
+  })
+
+  test('the missing-Name message matches the kind of file', () => {
+    const simple = importPeopleCsv('Email\na@b.c', { withHouseholds: false })
+    expect(!simple.ok && simple.error).toContain('Name, Email, Gift hint.')
+    const grouped = importPeopleCsv('Email\na@b.c')
+    expect(!grouped.ok && grouped.error).toContain('Household, Name, Email, Gift hint.')
   })
 
   test('a blank household means the person lives on their own', () => {

@@ -6,15 +6,17 @@ interface Props {
   event: EventDetails
   dispatch: Dispatch<SantaAction>
   locked: boolean
+  /** Inside a collapsible section that already has its own heading. */
+  embedded?: boolean
 }
 
-export function EventDetailsForm({ event, dispatch, locked }: Props) {
+export function EventDetailsForm({ event, dispatch, locked, embedded = false }: Props) {
   const set = (field: keyof EventDetails) => (e: React.ChangeEvent<HTMLInputElement>) =>
     dispatch({ type: 'setEvent', field, value: e.target.value })
 
   return (
-    <section className="card p-5">
-      <h2 className="text-lg font-bold">The party</h2>
+    <section className={embedded ? '' : 'card p-5'}>
+      {!embedded && <h2 className="text-lg font-bold">The party</h2>}
       <p className="mt-0.5 text-sm text-pine-800/70">All optional. Shown on everyone's reveal page.</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <div className="sm:col-span-3 md:col-span-1">

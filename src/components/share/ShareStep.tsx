@@ -3,7 +3,7 @@ import type { SantaState } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
 import type { ConfirmOptions } from '../ConfirmDialog.tsx'
 import { buildRevealUrl } from '../../lib/revealLink.ts'
-import { householdLabel } from '../../lib/labels.ts'
+import { householdTag } from '../../lib/labels.ts'
 import { ShareRow } from './ShareRow.tsx'
 import { BackupControls } from './BackupControls.tsx'
 import { MasterList } from './MasterList.tsx'
@@ -19,7 +19,9 @@ export function ShareStep({ state, dispatch, confirm }: Props) {
   const draw = state.draw
   if (!draw) return null
 
-  const people = state.households.flatMap((h, i) => h.people.map((p) => ({ person: p, household: householdLabel(h, i) })))
+  const people = state.households.flatMap((h, i) =>
+    h.people.map((p) => ({ person: p, household: householdTag(h, i, state.useHouseholds) })),
+  )
   const byId = new Map(people.map(({ person }) => [person.id, person]))
   const sentCount = people.filter(({ person }) => draw.sent[person.id]).length
   const { event } = state

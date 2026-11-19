@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import type { SantaState } from '../types.ts'
-import { STORAGE_KEY, backupFileName, loadState, parseBackup, saveState, serializeBackup } from './storage.ts'
+import { STORAGE_KEY, backupFileName, createInitialState, loadState, parseBackup, saveState, serializeBackup } from './storage.ts'
 import { santaReducer } from '../hooks/santaReducer.ts'
 
 function sample(): SantaState {
@@ -20,6 +20,7 @@ function sample(): SantaState {
       { id: 'h2', name: 'The Lees', people: [{ id: 'c', name: 'Vegeta', email: '', wishlist: '', isChild: false, age: '' }] },
       { id: 'h3', name: 'Gran', people: [{ id: 'd', name: 'Gran', email: '', wishlist: 'Tea', isChild: false, age: '' }] },
     ],
+    useHouseholds: true,
     exclusions: [{ id: 'x', giverId: 'a', receiverId: 'c', mutual: true }],
     draw: { createdAt: '2026-11-14T00:00:00.000Z', pairs: { a: 'd', b: 'c', c: 'a', d: 'b' }, sent: { a: true } },
   }
@@ -134,5 +135,35 @@ describe('children in backups', () => {
     const old = JSON.parse(JSON.stringify(sample()))
     for (const h of old.households) for (const p of h.people) { delete p.isChild; delete p.age }
     expect(parseBackup(JSON.stringify(old))!.households[0]!.people[0]).toMatchObject({ isChild: false, age: '' })
+  })
+})
+
+describe('simple list or households', () => {
+  const single = (id: string, name: string) => ({
+    id: `h-${id}`,
+    name: '',
+    people: [{ id, name, email: '', wishlist: '', isChild: false, age: '' }],
+  })
+
+  test('a new list starts as a simple list with three empty rows', () => {
+    const s = createInitialState()
+    expect(s.useHouseholds).toBe(false)
+    expect(s.households).toHaveLength(3)
+    expect(s.households.every((h) => h.people.length === 1 && h.name === '')).toBe(true)
+  })
+
+  test('older saves without the flag open the way they looked', () => {
+    const grouped = JSON.parse(JSON.stringify(sample()))
+    delete grouped.useHouseholds
+    expect(parseBackup(JSON.stringify(grouped))!.useHouseholds).toBe(true)
+
+    const singles = { ...grouped, draw: null, exclusions: [], households: [single('a', 'A'), single('b', 'B'), single('c', 'C')] }
+    expect(parseBackup(JSON.stringify(singles))!.useHouseholds).toBe(false)
+  })
+
+  test('the flag survives a backup, but never hides real households', () => {
+    const simple = { ...sample(), draw: null, exclusions: [], households: [single('a', 'A'), single('b', 'B'), single('c', 'C')], useHouseholds: false }
+    expect(parseBackup(serializeBackup(simple))!.useHouseholds).toBe(false)
+    expect(parseBackup(JSON.stringify({ ...sample(), useHouseholds: false }))!.useHouseholds).toBe(true)
   })
 })

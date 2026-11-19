@@ -1,5 +1,5 @@
 import type { EventDetails, Household, SantaState, Step } from '../types.ts'
-import { createInitialState, newHousehold, newId, newPerson } from '../lib/storage.ts'
+import { createInitialState, looksGrouped, newHousehold, newId, newPerson } from '../lib/storage.ts'
 
 export type SantaAction =
   | { type: 'setEvent'; field: keyof EventDetails; value: string }
@@ -11,6 +11,9 @@ export type SantaAction =
   | { type: 'updatePerson'; personId: string; field: 'name' | 'email' | 'wishlist' | 'age'; value: string }
   | { type: 'setChild'; personId: string; isChild: boolean }
   | { type: 'removePerson'; personId: string }
+  | { type: 'setUseHouseholds'; on: boolean }
+  | { type: 'movePerson'; personId: string; to: string | 'new' }
+  | { type: 'dropBlankPeople' }
   | { type: 'addExclusion'; giverId: string; receiverId: string; mutual: boolean }
   | { type: 'toggleExclusionMutual'; exclusionId: string }
   | { type: 'removeExclusion'; exclusionId: string }
@@ -32,6 +35,9 @@ const SETUP_EDITS = new Set<SantaAction['type']>([
   'updatePerson',
   'setChild',
   'removePerson',
+  'setUseHouseholds',
+  'movePerson',
+  'dropBlankPeople',
   'addExclusion',
   'toggleExclusionMutual',
   'removeExclusion',
@@ -58,6 +64,8 @@ export function santaReducer(state: SantaState, action: SantaAction): SantaState
       return {
         ...state,
         households: action.households,
+        // An import that groups people turns households on, so the grouping isn't hidden.
+        useHouseholds: state.useHouseholds || looksGrouped(action.households),
         exclusions: state.exclusions.filter((e) => ids.has(e.giverId) && ids.has(e.receiverId)),
       }
     }
@@ -112,6 +120,49 @@ export function santaReducer(state: SantaState, action: SantaAction): SantaState
         households: state.households.map((h) => ({ ...h, people: h.people.filter((p) => p.id !== action.personId) })),
         exclusions: dropExclusionsFor(state, new Set([action.personId])),
       }
+
+    case 'setUseHouseholds': {
+      if (action.on === state.useHouseholds) return state
+      if (action.on) {
+        // Everyone starts in their own household; "Move to" groups them. Empty rows are dropped.
+        const named = state.households.filter((h) => h.people.some((p) => p.name.trim()))
+        return { ...state, useHouseholds: true, households: named.length > 0 ? named : state.households }
+      }
+      // Back to a plain list: one unnamed household of one per person. People and rules stay.
+      const households = state.households.flatMap((h) =>
+        h.people.map((p, i) => ({ id: i === 0 ? h.id : newId(), name: '', people: [p] })),
+      )
+      return { ...state, useHouseholds: false, households: households.length > 0 ? households : [newHousehold()] }
+    }
+
+    case 'movePerson': {
+      const from = state.households.find((h) => h.people.some((p) => p.id === action.personId))
+      const person = from?.people.find((p) => p.id === action.personId)
+      if (!from || !person || from.id === action.to) return state
+      if (action.to !== 'new' && !state.households.some((h) => h.id === action.to)) return state
+      const households = state.households
+        .map((h) => {
+          if (h.id === from.id) return { ...h, people: h.people.filter((p) => p.id !== person.id) }
+          if (h.id === action.to) return { ...h, people: [...h.people, person] }
+          return h
+        })
+        .filter((h) => h.people.length > 0)
+      if (action.to === 'new') households.push({ id: newId(), name: '', people: [person] })
+      return { ...state, households }
+    }
+
+    case 'dropBlankPeople': {
+      const blank = new Set(state.households.flatMap((h) => h.people.filter((p) => !p.name.trim()).map((p) => p.id)))
+      if (blank.size === 0) return state
+      const households = state.households
+        .map((h) => ({ ...h, people: h.people.filter((p) => !blank.has(p.id)) }))
+        .filter((h) => h.people.length > 0)
+      return {
+        ...state,
+        households: households.length > 0 ? households : [newHousehold()],
+        exclusions: dropExclusionsFor(state, blank),
+      }
+    }
 
     case 'addExclusion': {
       if (action.giverId === action.receiverId) return state

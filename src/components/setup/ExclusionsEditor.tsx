@@ -8,9 +8,12 @@ interface Props {
   exclusions: Exclusion[]
   dispatch: Dispatch<SantaAction>
   locked: boolean
+  /** Inside a collapsible section that already has its own heading. */
+  embedded?: boolean
+  useHouseholds: boolean
 }
 
-export function ExclusionsEditor({ households, exclusions, dispatch, locked }: Props) {
+export function ExclusionsEditor({ households, exclusions, dispatch, locked, embedded = false, useHouseholds }: Props) {
   const [giverId, setGiverId] = useState('')
   const [receiverId, setReceiverId] = useState('')
   const [mutual, setMutual] = useState(true)
@@ -30,19 +33,24 @@ export function ExclusionsEditor({ households, exclusions, dispatch, locked }: P
   }
 
   return (
-    <section className="card p-5">
-      <h2 className="text-lg font-bold">Extra rules</h2>
+    <section className={embedded ? '' : 'card p-5'}>
+      {!embedded && <h2 className="text-lg font-bold">Extra rules</h2>}
       <p className="mt-0.5 text-sm text-pine-800/70">
-        Households never draw each other automatically. Add a rule for anything else — like not repeating last year's
-        match.
+        {useHouseholds
+          ? "Households never draw each other automatically. Add a rule for anything else — like not repeating last year's match."
+          : 'Stop two people drawing each other, like a couple, or someone who had them last year.'}
       </p>
 
       {exclusions.length > 0 && (
         <ul className="mt-4 space-y-2">
           {exclusions.map((e) => (
-            <li key={e.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-berry-50 px-3 py-2 text-sm">
+            <li
+              key={e.id}
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-berry-50 px-3 py-2 text-sm"
+            >
               <span className="flex-1">
-                <strong>{name(e.giverId)}</strong> {e.mutual ? 'and' : "can't draw"} <strong>{name(e.receiverId)}</strong>
+                <strong>{name(e.giverId)}</strong> {e.mutual ? 'and' : "can't draw"}{' '}
+                <strong>{name(e.receiverId)}</strong>
                 {e.mutual && " can't draw each other"}
               </span>
               {!locked && (
@@ -114,13 +122,19 @@ export function ExclusionsEditor({ households, exclusions, dispatch, locked }: P
                 <option value="">Choose…</option>
                 {receiverOptions.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.name.trim()} ({p.household})
+                    {p.name.trim()}
+                    {useHouseholds ? ` (${p.household})` : ''}
                   </option>
                 ))}
               </select>
             </div>
             <label className="flex cursor-pointer items-center gap-2 pb-2 text-sm font-medium">
-              <input type="checkbox" className="size-4 accent-pine-600" checked={mutual} onChange={(e) => setMutual(e.target.checked)} />
+              <input
+                type="checkbox"
+                className="size-4 accent-pine-600"
+                checked={mutual}
+                onChange={(e) => setMutual(e.target.checked)}
+              />
               Both ways
             </label>
             <button type="button" className="btn-secondary sm:mb-0.5" onClick={add} disabled={!canAdd}>

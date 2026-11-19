@@ -2,7 +2,7 @@ import type { Dispatch } from 'react'
 import type { Household } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
 import { householdLabel } from '../../lib/labels.ts'
-import { PersonRow } from './PersonRow.tsx'
+import { PersonRow, type MoveTarget } from './PersonRow.tsx'
 
 const STRIPES = ['bg-berry-500', 'bg-pine-500', 'bg-gold-400', 'bg-pine-700', 'bg-berry-700']
 const EXAMPLES = ['The Taitos', 'The Ottos']
@@ -18,10 +18,16 @@ interface Props {
   dispatch: Dispatch<SantaAction>
   locked: boolean
   onRemove: () => void
+  /** Every household's id and label, for the "Move to" menu. */
+  allHouseholds: MoveTarget[]
 }
 
-export function HouseholdCard({ household, index, dispatch, locked, onRemove }: Props) {
+export function HouseholdCard({ household, index, dispatch, locked, onRemove, allHouseholds }: Props) {
   const label = householdLabel(household, index)
+  const moveTargets = [
+    ...allHouseholds.filter((h) => h.id !== household.id),
+    ...(household.people.length > 1 ? [{ id: 'new', label: 'A new household' }] : []),
+  ]
   return (
     <section className="card overflow-hidden" aria-label={label}>
       <div className={`h-1.5 ${STRIPES[index % STRIPES.length]}`} aria-hidden />
@@ -57,6 +63,7 @@ export function HouseholdCard({ household, index, dispatch, locked, onRemove }: 
               dispatch={dispatch}
               locked={locked}
               canRemove={household.people.length > 1}
+              moveTargets={moveTargets}
             />
           ))}
         </ul>

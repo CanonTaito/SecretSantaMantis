@@ -4,6 +4,11 @@ export function householdLabel(household: Household, index: number): string {
   return household.name.trim() || `Household ${index + 1}`
 }
 
+/** The household to show next to someone, or '' on a simple list, where households stay hidden. */
+export function householdTag(household: Household, index: number, useHouseholds: boolean): string {
+  return useHouseholds ? householdLabel(household, index) : ''
+}
+
 /** personId -> display name */
 export function personNames(households: Household[]): Record<string, string> {
   return Object.fromEntries(households.flatMap((h) => h.people.map((p) => [p.id, p.name.trim() || 'Unnamed'])))

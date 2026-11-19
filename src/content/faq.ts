@@ -18,7 +18,7 @@ export const HOW_IT_WORKS: HowStep[] = [
   {
     emoji: '🏠',
     title: 'Set up',
-    text: 'Add households and the people in each one. Tick Child for kids, and add gift hints and rules if you like.',
+    text: 'Add everyone’s name. If you like, group people who live together into households, tick Child for kids, and add gift hints or rules.',
   },
   {
     emoji: '🎲',

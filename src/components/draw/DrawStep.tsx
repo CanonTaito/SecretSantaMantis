@@ -93,7 +93,7 @@ export function DrawStep({ state, dispatch }: Props) {
       <div className="px-6 pt-8 pb-6">
         <h2 className="text-2xl font-bold">Ready to draw</h2>
         <p className="mt-1 text-pine-800/75">
-          {peopleCount} people · {state.households.length} households
+          {peopleCount} people{state.useHouseholds && ` · ${state.households.length} households`}
           {childCount > 0 && ` · ${childCount} ${childCount === 1 ? 'child' : 'children'}`}
           {state.exclusions.length > 0 &&
             ` · ${state.exclusions.length} extra ${state.exclusions.length === 1 ? 'rule' : 'rules'}`}

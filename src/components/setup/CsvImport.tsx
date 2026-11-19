@@ -1,12 +1,14 @@
 import { useRef, useState, type Dispatch } from 'react'
 import type { Household } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
-import { CSV_TEMPLATE, importPeopleCsv, mergeImport } from '../../lib/csvImport.ts'
+import { CSV_COLUMNS, CSV_TEMPLATE, CSV_TEMPLATE_SIMPLE, importPeopleCsv, mergeImport } from '../../lib/csvImport.ts'
 import { downloadText } from '../../lib/download.ts'
 
 interface Props {
   households: Household[]
   dispatch: Dispatch<SantaAction>
+  /** The simple list's file has no Household column. */
+  withHouseholds: boolean
 }
 
 type Status = { kind: 'ok'; message: string; warnings: string[] } | { kind: 'error'; message: string }
@@ -15,7 +17,7 @@ const MAX_WARNINGS_SHOWN = 5
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
 /** Bulk-add people from a CSV with columns Household, Name, Email, Gift hint. */
-export function CsvImport({ households, dispatch }: Props) {
+export function CsvImport({ households, dispatch, withHouseholds }: Props) {
   const input = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<Status | null>(null)
 
@@ -24,7 +26,7 @@ export function CsvImport({ households, dispatch }: Props) {
     const text = await file.text()
     if (input.current) input.current.value = ''
 
-    const parsed = importPeopleCsv(text)
+    const parsed = importPeopleCsv(text, { withHouseholds })
     if (!parsed.ok) {
       setStatus({ kind: 'error', message: parsed.error })
       return
@@ -47,7 +49,11 @@ export function CsvImport({ households, dispatch }: Props) {
         <button
           type="button"
           className="text-sm font-medium text-pine-700 underline underline-offset-4 hover:text-pine-900"
-          onClick={() => downloadText('secret-santa-guest-list.csv', CSV_TEMPLATE, 'text/csv')}
+          onClick={() =>
+            withHouseholds
+              ? downloadText('secret-santa-households.csv', CSV_TEMPLATE, 'text/csv')
+              : downloadText('secret-santa-names.csv', CSV_TEMPLATE_SIMPLE, 'text/csv')
+          }
         >
           Download template
         </button>
@@ -61,7 +67,9 @@ export function CsvImport({ households, dispatch }: Props) {
           onChange={(e) => onFile(e.target.files?.[0])}
         />
       </div>
-      <p className="text-xs text-pine-800/60">Columns: Household, Name, then optional Email, Gift hint, Child (Yes) and Age</p>
+      <p className="text-xs text-pine-800/60">
+        Columns: {withHouseholds ? CSV_COLUMNS.households : CSV_COLUMNS.simple}
+      </p>
 
       {status?.kind === 'error' && (
         <p role="alert" className="text-sm font-medium text-berry-600">

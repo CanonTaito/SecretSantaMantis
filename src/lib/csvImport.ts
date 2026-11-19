@@ -3,7 +3,8 @@ import { newId } from './storage.ts'
 
 /**
  * Import a guest list from CSV with columns: Household, Name, Email, Gift hint, Child, Age.
- * Only Name is required. A header row is recommended; without one, columns are read in that order.
+ * The simple list leaves out Household. Only Name is required. A header row is recommended;
+ * without one, columns are read in that order.
  * Child is "Yes" for children (kids only draw kids); Age is optional and only kept for children.
  */
 
@@ -31,6 +32,21 @@ export const CSV_TEMPLATE = [
   'The Ottos,Vegeta,vegeta@example.com,Batman,Yes,2',
   'Grandma Lina,Grandma Lina,,Gardening,,',
 ].join('\r\n')
+
+/** The same, for the simple list: everyone on their own row, no households. */
+export const CSV_TEMPLATE_SIMPLE = [
+  'Name,Email,Gift hint,Child,Age',
+  'Cruz,cruz@example.com,Loves online gaming,,',
+  'Rey,,,Yes,8',
+  'Vegeta,vegeta@example.com,Batman,Yes,2',
+  'Grandma Lina,,Gardening,,',
+].join('\r\n')
+
+/** What each kind of file looks like, for the hint under the Import button. */
+export const CSV_COLUMNS = {
+  households: 'Household, Name, then optional Email, Gift hint, Child (Yes) and Age',
+  simple: 'Name, then optional Email, Gift hint, Child (Yes) and Age',
+}
 
 const LIMITS = { household: 60, name: 60, email: 120, wishlist: 300, child: 20, age: 10 }
 const YES = /^(y|yes|true|1|x|✓|✔|child|kid)$/i
@@ -128,7 +144,11 @@ const normalizeHeader = (h: string) =>
     .replace(/[_\s]+/g, ' ')
     .trim()
 
-export function importPeopleCsv(text: string): CsvImportResult {
+/**
+ * `withHouseholds: false` is the simple list's file: without a header row, the first column is
+ * Name rather than Household. A Household column in a header row is still read either way.
+ */
+export function importPeopleCsv(text: string, { withHouseholds = true } = {}): CsvImportResult {
   const rows = parseCsv(text, detectDelimiter(text)).filter((r) => r.some((c) => c.trim() !== ''))
   if (rows.length === 0) return { ok: false, error: 'That file is empty.' }
 
@@ -142,10 +162,14 @@ export function importPeopleCsv(text: string): CsvImportResult {
       if (col && !columns.has(col)) columns.set(col, i)
     })
     if (!columns.has('name')) {
-      return { ok: false, error: 'Couldn’t find a "Name" column. The first row should be: Household, Name, Email, Gift hint.' }
+      const first = withHouseholds ? 'Household, Name, Email, Gift hint' : 'Name, Email, Gift hint'
+      return { ok: false, error: `Couldn’t find a "Name" column. The first row should be: ${first}.` }
     }
   } else {
-    ;(['household', 'name', 'email', 'wishlist', 'child', 'age'] as const).forEach((c, i) => columns.set(c, i))
+    const order = withHouseholds
+      ? (['household', 'name', 'email', 'wishlist', 'child', 'age'] as const)
+      : (['name', 'email', 'wishlist', 'child', 'age'] as const)
+    order.forEach((c, i) => columns.set(c, i))
   }
 
   const body = hasHeader ? rows.slice(1) : rows

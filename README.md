@@ -8,7 +8,11 @@ No accounts, no database of names, no email service. Your list and the draw stay
 
 ## How it works
 
-1. **Set up.** Add the party name, gift budget and exchange date (all optional). Then add **households** and the people in each one. Someone who lives alone is a household of one. Tick **Child** for children (with their age, if you like): children only draw other children, and adults only draw adults. Optionally, add a gift hint for each person and extra rules like "Cruz can't draw Vegeta" (handy for not repeating last year's match).
+1. **Set up.** Type everyone's name, one per row (press Enter for the next row). That's all a draw needs. Everything else is optional and folded away until you want it:
+   - **Details** on each row: a gift hint, an email address, and **Child** with their age. Children only draw other children, and adults only draw adults.
+   - **Group into households** switches to household cards for families: people in the same household never draw each other, and someone who lives alone is a household of one. **Move to…** moves someone between households, and **Switch to a simple list** goes back. Lists saved before this option existed open with households, as before.
+   - **Party details:** the party name, gift budget and exchange date.
+   - **Rules** like "Cruz can't draw Vegeta", handy for couples on a simple list or for not repeating last year's match.
 2. **Draw.** Press the button. Nobody draws themselves, anyone in their own household, or anyone a rule blocks. If the rules make a draw impossible, the app tells you why — for example, when one household is more than half the group.
 3. **Share.** Every person gets a private link. Copy it into a text, use your phone's share sheet, or press **Email** to open a ready-to-send message in your own email app. Tick people off as you go.
 4. **Unwrap.** When someone opens their link they see "Hi Cruz!", tap a present, and confetti reveals who they're buying for, along with that person's gift hint, the budget and the date.
@@ -21,7 +25,12 @@ The site shows these steps and a short FAQ at the bottom of the home page (`…/
 
 ## Importing a list from a spreadsheet
 
-Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** on the Set up screen. Use these columns (press **Download template** for an example file):
+Got everyone in a spreadsheet already? Save it as CSV and press **Import CSV** on the Set up screen (on the simple list it's under **Import from a spreadsheet**). Each mode has its own **Download template**:
+
+- **Simple list:** Name, then optional Email, Gift hint, Child and Age.
+- **Households:** the same, with a **Household** column first, as below.
+
+A Household column is always read, so importing a households file into the simple list switches households on rather than losing who lives together. Without a header row, columns are read in the order of the mode you're in.
 
 | Household | Name | Email | Gift hint | Child | Age |
 | --- | --- | --- | --- | --- | --- |

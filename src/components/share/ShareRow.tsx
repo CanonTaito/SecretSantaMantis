@@ -57,10 +57,12 @@ export function ShareRow({ person, household, url, eventName, sent, onSent }: Pr
         <span className="min-w-0">
           <span className="block truncate font-semibold">{name}</span>
           <span className="block truncate text-xs text-pine-800/60">
-            {household}
-            {person.isChild && ` · ${childLabel(person)}`}
-            {person.email && ` · ${person.email}`}
-            {sent && <span className="font-semibold text-pine-600"> · Sent ✓</span>}
+            {[household, childLabel(person), person.email].filter(Boolean).join(' · ')}
+            {sent && (
+              <span className="font-semibold text-pine-600">
+                {household || person.isChild || person.email ? ' · ' : ''}Sent ✓
+              </span>
+            )}
           </span>
         </span>
       </label>
