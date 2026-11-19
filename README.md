@@ -117,6 +117,20 @@ The footer's **Send feedback** link opens the same Web3Forms form as Advertise h
 
 When the site's address is shared on Facebook, Messenger or WhatsApp, the preview shows `public/og-image.png`. To change it, edit [`scripts/og-image.svg`](scripts/og-image.svg) and run `npm run og-image`. That rebuilds the preview picture and `public/apple-touch-icon.png` (the home-screen icon), using fonts installed on your computer. Commit both PNGs. Facebook keeps old previews for a while, so after a change, paste the address into Facebook's [Sharing Debugger](https://developers.facebook.com/tools/debug/) and press **Scrape Again**.
 
+## Facebook video
+
+[`marketing/videos/`](marketing/videos/) holds a 22-second video, "Secret Santa sorted in 30 seconds". It's a real recording of the app with a made-up family: type six names, tap Draw, copy a link, and watch it unwrap. Big captions make it work with the sound off, and an end card shows the address.
+
+- **`secret-santa-30s-4x5.mp4`** (1080×1350) is for **group posts and the feed**, where Facebook shows videos at up to 4:5.
+- **`secret-santa-30s-9x16.mp4`** (1080×1920) is for **Reels and Stories**: the same video with the brand bars added above and below, so nothing important sits under the Reels buttons.
+
+**Remaking it** after the app changes: run `npm run video`. It starts the dev server, records each scene in headless Chrome ([`scripts/make-video.mjs`](scripts/make-video.mjs)), and puts it together with ffmpeg. It needs Google Chrome (`CHROME_PATH` if it isn't in the usual place) and ffmpeg (on `PATH`, or `FFMPEG_PATH`). Recording happens on localhost, so it never adds to the usage counts. The names, captions and timings are near the top of the script.
+
+**Posting tips:**
+- **Groups:** upload the 4:5 file with a short post, and put the address in the text too. Check each group's rules on self-promotion first.
+- **Reels:** post the 9:16 file from the Facebook app, and add a track from its music library there, which keeps the music licensed.
+- The first frame, "Doing Secret Santa this year?", is what Facebook shows before anyone presses play.
+
 ## Search engines
 
 - [`public/robots.txt`](public/robots.txt) lets search engines crawl the site, keeps them out of `/api/`, and points them to the sitemap. Cloudflare's managed robots.txt adds its own comments above these rules.

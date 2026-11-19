@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "og-image": "node scripts/make-og-image.mjs"
+    "og-image": "node scripts/make-og-image.mjs",
+    "video": "node scripts/make-video.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "jsdom": "^29.1.1",
+    "puppeteer-core": "^25.16.0",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
