@@ -3,7 +3,7 @@ import type { SantaState } from '../../types.ts'
 import type { SantaAction } from '../../hooks/useSantaState.ts'
 import { buildDrawInput, explainImpossible, generateDraw, validateSetup } from '../../lib/draw.ts'
 import { formatDate, householdNames, personNames } from '../../lib/labels.ts'
-import { countEvent } from '../../lib/count.ts'
+import { countEvent, countReadyOnce } from '../../lib/count.ts'
 
 interface Props {
   state: SantaState
@@ -28,6 +28,8 @@ export function DrawStep({ state, dispatch }: Props) {
   const timers = useRef<number[]>([])
 
   useEffect(() => () => timers.current.forEach((t) => clearTimeout(t)), [])
+  // Anonymous: someone got as far as this step (see lib/count.ts). Compare with draws in the stats.
+  useEffect(() => countReadyOnce(), [])
 
   const finish = () => {
     const input = buildDrawInput(state.households, state.exclusions)

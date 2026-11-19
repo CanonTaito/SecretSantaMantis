@@ -10,6 +10,11 @@ describe('parseCountEvent', () => {
     expect(parseCountEvent('{"e":"unwrap"}')).toEqual({ e: 'unwrap' })
   })
 
+  test('accepts reaching the Draw step, with nothing else attached', () => {
+    expect(parseCountEvent('{"e":"ready"}')).toEqual({ e: 'ready' })
+    expect(parseCountEvent('{"e":"ready","n":12,"name":"Cruz"}')).toEqual({ e: 'ready' })
+  })
+
   test('keeps only the known fields, so nothing extra can be stored', () => {
     expect(parseCountEvent('{"e":"draw","n":4,"name":"Cruz"}')).toEqual({ e: 'draw', n: 4 })
     expect(parseCountEvent('{"e":"unwrap","r":"Vegeta"}')).toEqual({ e: 'unwrap' })

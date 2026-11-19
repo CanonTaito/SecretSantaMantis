@@ -1,9 +1,9 @@
 /**
- * The anonymous counts the site keeps: a draw was made (and how many people were in it),
- * or a gift was unwrapped. No names, links or matches are ever part of these.
- * Shared by the page (src/lib/count.ts) and the Cloudflare Worker (worker/index.ts).
+ * The anonymous counts the site keeps: someone reached the Draw step ("ready"), a draw was made
+ * (and how many people were in it), or a gift was unwrapped. No names, links or matches are
+ * ever part of these. Shared by the page (src/lib/count.ts) and the Cloudflare Worker (worker/index.ts).
  */
-export type CountEvent = { e: 'draw'; n: number } | { e: 'unwrap' }
+export type CountEvent = { e: 'ready' } | { e: 'draw'; n: number } | { e: 'unwrap' }
 
 /** Where the page posts counts. Handled by worker/index.ts. */
 export const COUNT_PATH = '/api/event'
@@ -24,6 +24,7 @@ export function parseCountEvent(body: string): CountEvent | null {
   if (typeof data !== 'object' || data === null || Array.isArray(data)) return null
   const { e, n } = data as { e?: unknown; n?: unknown }
   if (e === 'unwrap') return { e: 'unwrap' }
+  if (e === 'ready') return { e: 'ready' }
   if (e === 'draw' && typeof n === 'number' && Number.isInteger(n) && n >= MIN_PEOPLE && n <= MAX_PEOPLE) {
     return { e: 'draw', n }
   }

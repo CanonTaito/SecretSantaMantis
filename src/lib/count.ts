@@ -4,6 +4,7 @@ import { NEW_HOME } from './moved.ts'
 /** Counts are only sent from the real site, so local testing and other copies don't add to them. */
 const COUNT_HOST = new URL(NEW_HOME).hostname
 const UNWRAPPED_KEY = 'secret-santa-unwrapped'
+const READY_KEY = 'secret-santa-ready-counted'
 const MAX_REMEMBERED = 50
 
 export function shouldCount(hostname = window.location.hostname): boolean {
@@ -23,6 +24,21 @@ export function countEvent(event: CountEvent, hostname = window.location.hostnam
   } catch {
     // Counting is a nice-to-have.
   }
+}
+
+/**
+ * Counts reaching the Draw step once per browser tab, so going back to fix a name and pressing
+ * Next again doesn't count twice. A new visit (or tab) counts again.
+ */
+export function countReadyOnce(hostname = window.location.hostname): void {
+  if (!shouldCount(hostname)) return
+  try {
+    if (sessionStorage.getItem(READY_KEY)) return
+    sessionStorage.setItem(READY_KEY, '1')
+  } catch {
+    // Storage blocked (private mode): count anyway.
+  }
+  countEvent({ e: 'ready' }, hostname)
 }
 
 /** A short fingerprint of a link, so the link itself is never stored. */

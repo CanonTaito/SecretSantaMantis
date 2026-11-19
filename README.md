@@ -65,15 +65,16 @@ Nothing about your group is stored on a server, so the draw lives in three place
 - Links are **scrambled, not encrypted**. Names aren't readable at a glance, but someone who has a link and knows what they're doing could decode it. Treat each link like a sealed envelope: only send it to the person it's for.
 - Email addresses are used only to pre-fill the "To" line in your own email app. They are never sent anywhere by this site.
 - The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits. It uses no cookies and doesn't track individual visitors. It never sees the part of a link after `#`, so names and matches aren't included.
-- The live site keeps two anonymous totals: draws made (with the number of people in each) and gifts unwrapped. Only those numbers are sent; see [Usage counts](#usage-counts).
+- The live site keeps three anonymous totals: visits that reached the Draw step, draws made (with the number of people in each) and gifts unwrapped. Only those numbers are sent; see [Usage counts](#usage-counts).
 - The sponsor banner picks an ad from your device's **time zone** setting. That check happens in your browser; nothing about your location is sent anywhere.
 - Gift-idea links go to amazon.com.au with the site's Associates tag; nothing about the match or the people is included in them.
 - The **Advertise here** and **Send feedback** forms are the only things that send what people type off the page: when someone presses Send, what they entered goes to [Web3Forms](https://web3forms.com), which emails it to the site owner.
 
 ## Usage counts
 
-To see whether people actually use the site, it counts two things, as plain numbers per day:
+To see whether people actually use the site, it counts three things, as plain numbers per day:
 
+- **Ready:** when someone reaches the Draw step, the page sends `{"e":"ready"}`, once per browser tab, so going back to fix a name doesn't count twice. Counted from 19 November 2026; earlier days show 0.
 - **Draws:** when a draw succeeds, the page sends `{"e":"draw","n":8}` (8 being the number of people). A redraw counts again.
 - **Unwraps:** when someone opens their present, the page sends `{"e":"unwrap"}`, once per link per device.
 
@@ -87,6 +88,7 @@ The counting runs in a small Cloudflare Worker ([`worker/index.ts`](worker/index
 
 | Column | What it counts |
 | --- | --- |
+| **Ready** | Visits that got as far as the Draw step, once per browser tab. |
 | **Draws** | Draws that finished. A redraw counts again, so this can be a little higher than the number of groups. |
 | **People** | Everyone in those draws, added up. |
 | **Avg group** | People ÷ draws: a typical group's size. A good number to quote to advertisers. |
@@ -95,6 +97,7 @@ The counting runs in a small Cloudflare Worker ([`worker/index.ts`](worker/index
 What to look for:
 
 - **Unwraps compared with people** shows whether links get used. If unwraps reach roughly 70–90% of people, groups are sending and opening their links. Far lower means organisers may be drawing but not sending links, or people haven't opened them yet. Someone opening their link on both a phone and a laptop counts twice, so unwraps can occasionally go above people.
+- **Ready compared with visits, and draws compared with ready,** shows where people stop. Few reaching Draw means the names screen loses them; many reaching Draw but few drawing means something on the Draw step does (often "add at least 3 people" or an impossible draw). Ready counts a tab once, while a redraw counts as another draw, so draws can sometimes be higher than ready.
 - **Draws compared with visits** (visits come from Cloudflare Web Analytics) shows how many visitors actually run a draw. For example, 400 visits and 20 draws means about 1 in 20 visitors organised a group.
 - **Unwraps trail draws by a few days.** Organisers often draw names early and send links later, so a day with many draws is usually followed by days of unwraps.
 - **Expect a seasonal shape:** quiet most of the year, rising from late October, peaking in late November and early December, and fading after Christmas.

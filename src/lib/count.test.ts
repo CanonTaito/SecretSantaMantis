@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { countEvent, countUnwrapOnce, shouldCount } from './count.ts'
+import { countEvent, countReadyOnce, countUnwrapOnce, shouldCount } from './count.ts'
 import { parseCountEvent } from './countEvents.ts'
 
 const SITE = 'secretsanta.taitoapps.com'
@@ -9,6 +9,7 @@ describe('counting', () => {
 
   beforeEach(() => {
     localStorage.clear()
+    sessionStorage.clear()
     fetchMock.mockClear()
     vi.stubGlobal('fetch', fetchMock)
   })
@@ -41,6 +42,17 @@ describe('counting', () => {
     countUnwrapOnce('#/r/second-link', SITE)
     expect(sentBodies()).toEqual(['{"e":"unwrap"}', '{"e":"unwrap"}'])
     expect(localStorage.getItem('secret-santa-unwrapped')).not.toContain('first-link')
+  })
+
+  test('reaching the Draw step counts once per tab, and only on the real site', () => {
+    countReadyOnce('localhost')
+    expect(fetchMock).not.toHaveBeenCalled()
+    countReadyOnce(SITE)
+    countReadyOnce(SITE)
+    expect(sentBodies()).toEqual(['{"e":"ready"}'])
+    sessionStorage.clear()
+    countReadyOnce(SITE)
+    expect(sentBodies()).toHaveLength(2)
   })
 
   test('a failed request never throws', () => {

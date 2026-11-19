@@ -2,7 +2,7 @@
  * The site's only server code. The pages themselves are static files that Cloudflare serves
  * without running this; it only handles two addresses:
  *
- *   POST /api/event   adds one to today's count of draws or unwraps (anonymous, see countEvents.ts)
+ *   POST /api/event   adds one to today's count of Draw-step visits, draws or unwraps (anonymous, see countEvents.ts)
  *   GET  /api/stats   the owner's totals, behind a password (the STATS_KEY secret)
  *
  * Counts live in one small Durable Object with a built-in SQLite table: one row per day.
@@ -18,6 +18,7 @@ interface Env {
 
 interface DayRow extends Record<string, SqlStorageValue> {
   day: string
+  ready: number
   draws: number
   people: number
   unwraps: number
@@ -34,11 +35,22 @@ export class Counter extends DurableObject<Env> {
          unwraps INTEGER NOT NULL DEFAULT 0
        )`,
     )
+    // Added after launch (2026-11-19): people who reached the Draw step. Older days read 0.
+    const columns = ctx.storage.sql.exec<{ name: string }>('PRAGMA table_info(daily)').toArray()
+    if (!columns.some((c) => c.name === 'ready')) {
+      ctx.storage.sql.exec('ALTER TABLE daily ADD COLUMN ready INTEGER NOT NULL DEFAULT 0')
+    }
   }
 
   record(day: string, event: CountEvent): void {
     const sql = this.ctx.storage.sql
-    if (event.e === 'draw') {
+    if (event.e === 'ready') {
+      sql.exec(
+        `INSERT INTO daily (day, ready) VALUES (?, 1)
+         ON CONFLICT(day) DO UPDATE SET ready = ready + 1`,
+        day,
+      )
+    } else if (event.e === 'draw') {
       sql.exec(
         `INSERT INTO daily (day, draws, people) VALUES (?, 1, ?)
          ON CONFLICT(day) DO UPDATE SET draws = draws + 1, people = people + excluded.people`,
@@ -56,7 +68,7 @@ export class Counter extends DurableObject<Env> {
 
   days(): DayRow[] {
     return this.ctx.storage.sql
-      .exec<DayRow>('SELECT day, draws, people, unwraps FROM daily ORDER BY day DESC LIMIT 400')
+      .exec<DayRow>('SELECT day, ready, draws, people, unwraps FROM daily ORDER BY day DESC LIMIT 400')
       .toArray()
   }
 }
@@ -87,13 +99,20 @@ function passwordFrom(request: Request): string | null {
 }
 
 function statsPage(rows: DayRow[]): string {
-  const total = rows.reduce(
-    (t, r) => ({ draws: t.draws + r.draws, people: t.people + r.people, unwraps: t.unwraps + r.unwraps }),
-    { draws: 0, people: 0, unwraps: 0 },
+  type Totals = { ready: number; draws: number; people: number; unwraps: number }
+  const total = rows.reduce<Totals>(
+    (t, r) => ({
+      ready: t.ready + r.ready,
+      draws: t.draws + r.draws,
+      people: t.people + r.people,
+      unwraps: t.unwraps + r.unwraps,
+    }),
+    { ready: 0, draws: 0, people: 0, unwraps: 0 },
   )
   const average = (people: number, draws: number) => (draws ? (people / draws).toFixed(1) : '–')
-  const row = (label: string, r: { draws: number; people: number; unwraps: number }, tag = 'td') =>
-    `<tr><${tag}>${label}</${tag}><${tag}>${r.draws}</${tag}><${tag}>${r.people}</${tag}><${tag}>${average(r.people, r.draws)}</${tag}><${tag}>${r.unwraps}</${tag}></tr>`
+  const cells = (r: Totals) => [r.ready, r.draws, r.people, average(r.people, r.draws), r.unwraps]
+  const row = (label: string, r: Totals, tag = 'td') =>
+    `<tr>${[label, ...cells(r)].map((c) => `<${tag}>${c}</${tag}>`).join('')}</tr>`
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -118,10 +137,10 @@ function statsPage(rows: DayRow[]): string {
 <body>
 <main>
 <h1>🎅🏾 Secret Santa Mantis stats</h1>
-<p>Anonymous counts only. Days are Brisbane time. A redraw counts as another draw.</p>
+<p>Anonymous counts only. Days are Brisbane time. Ready: reached the Draw step (once per browser tab, counted from 19 Nov 2026). A redraw counts as another draw.</p>
 <div class="wrap">
 <table>
-<thead><tr><th>Day</th><th>Draws</th><th>People</th><th>Avg group</th><th>Unwraps</th></tr></thead>
+<thead><tr><th>Day</th><th>Ready</th><th>Draws</th><th>People</th><th>Avg group</th><th>Unwraps</th></tr></thead>
 <tbody>
 ${row('All time', total, 'th')}
 ${rows.map((r) => row(r.day, r)).join('\n')}
